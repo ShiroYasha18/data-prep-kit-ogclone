@@ -103,6 +103,7 @@ gneissweb = { file = [
 "universal/tokenization/requirements.txt",
 "universal/resize/requirements.txt",
 "universal/rep_removal/requirements.txt",
+"universal/bloom/requirements.txt",
 "universal/tokenization2arrow/requirements.txt"
 ]}
 
