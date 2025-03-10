@@ -116,8 +116,8 @@ body:
               - "Ubuntu"
               - "Red Hat Enterprise Linux (RHEL)"
               - "Fedora"
-              - "Windows WSL"
-              - "MacOS (limited support)"
+              - "Windows"
+              - "MacOS"
               - "Other"
       validations:
           required: true
@@ -129,8 +129,9 @@ body:
               What version of python
           multiple: true
           options:
-              - "3.10.x"
-              - "3.11.x"
+              - "3.10"
+              - "3.11"
+              - "3.12"
               - "Other"
       validations:
           required: true
