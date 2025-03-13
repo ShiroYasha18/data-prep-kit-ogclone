@@ -309,5 +309,4 @@ class CodeQualityTransformConfiguration(TransformConfiguration):
                 "hf_token": dargs.get("hf_token"),
             }
         }
-
         return True
