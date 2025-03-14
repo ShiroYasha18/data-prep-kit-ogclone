@@ -31,7 +31,7 @@ from transformers import AutoTokenizer
 
 CODE_QUALITY_PARAMS = "code_quality_params"
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
-model_credential_from_env = os.environ.get("HF_READ_ACCESS_TOKEN", "")
+model_credential_from_env = os.environ.get("HF_READ_ACCESS_TOKEN")
 
 
 def is_xml(data, lang):
