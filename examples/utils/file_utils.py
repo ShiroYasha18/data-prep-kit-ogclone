@@ -3,7 +3,7 @@ import requests
 from humanfriendly import format_size
 import pandas as pd
 import glob
-from typing import List, Optional
+# from typing import List, Optional
 
 ## Reads parquet files in a folder into a pandas dataframe
 def read_parquet_files_as_df(parquet_dir: str)  -> pd.DataFrame:
@@ -26,7 +26,7 @@ def read_parquet_files_as_df(parquet_dir: str)  -> pd.DataFrame:
         return pd.DataFrame()
 
     # read each parquet file into a DataFrame and store in a list
-    dfs: List[pd.DataFrame] = []
+    dfs: list[pd.DataFrame] = []
     for file in parquet_files:
         try:
             df: pd.DataFrame = pd.read_parquet(file)
