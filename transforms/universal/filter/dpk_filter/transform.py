@@ -322,7 +322,7 @@ class FilterTransformConfiguration(TransformConfiguration):
             type=str,
             required=False,
             default=None,
-            help={f"the output path to the .arrow files"}
+            help="the output path to the .arrow files"
         )
         parser.add_argument(
             f"--{filter_doc_id_column_name_cli_param}",
