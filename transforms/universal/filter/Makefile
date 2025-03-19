@@ -28,10 +28,9 @@ run-python-cli-sample-arrow:
 			--filter_doc_id_column_name "document_id" \
 			--filter_input_arrow_folder "test-data/ds01/input/arrow/" \
 			--filter_output_arrow_folder "output/arrow/"
-			
+
 
 run-ray-cli-sample-arrow:
-	# TODO: set env variable HF_TOKEN to download tokenizer from HF
 	make venv
 	source venv/bin/activate && \
 	rm -rf output && \
@@ -56,7 +55,6 @@ run-python-cli-sample:
 
 
 run-ray-cli-sample:
-	# TODO: set env variable HF_TOKEN to download tokenizer from HF
 	make venv
 	source venv/bin/activate && \
 	rm -rf output && \
