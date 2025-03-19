@@ -329,7 +329,7 @@ class FilterTransformConfiguration(TransformConfiguration):
             type=str,
             required=False,
             default="id",
-            help={f"the unique doc_id column name"}
+            help="the unique doc_id column name"
         )
 
 
