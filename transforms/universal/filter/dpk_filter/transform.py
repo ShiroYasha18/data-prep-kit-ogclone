@@ -248,8 +248,8 @@ class FilterTransform(AbstractTableTransform):
             return [], metadata
         else:
             # before returning the filtered table (parquet files) also filter the corresponding arrow and meta files
-            if self.input_arrow_folder is not None:
-                assert self.output_arrow_folder is not None, f"ERROR: filter_output_arrow_folder is needed"
+            if bool(self.input_arrow_folder.strip()):
+                assert bool(self.output_arrow_folder.strip()), f"ERROR: filter_output_arrow_folder is needed"
                 self._construct_arrow_meta_file_path(file_name)
                 filtered_id_list = filtered_table_cols_dropped.column(self.doc_id_column_name).to_pylist()
                 self._filter_arrow_and_meta_files(file_name, filtered_id_list)
