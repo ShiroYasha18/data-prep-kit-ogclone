@@ -119,8 +119,8 @@ def filtering(
     filter_criteria_list: str = "['docq_total_words > 100 AND docq_total_words < 200', 'ibmkenlm_docq_perplex_score < 230']",
     filter_logical_operator: str = "AND",
     filter_columns_to_drop: str = "['extra', 'cluster']",
-    filter_input_arrow_folder: str = None,
-    filter_output_arrow_folder: str = None,
+    filter_input_arrow_folder: str = "",
+    filter_output_arrow_folder: str = "",
     filter_doc_id_column_name: str = "document_id",
     # additional parameters
     additional_params: str = '{"wait_interval": 2, "wait_cluster_ready_tmout": 400, "wait_cluster_up_tmout": 300, "wait_job_ready_tmout": 400, "wait_print_tmout": 30, "http_retries": 5, "delete_cluster_delay_minutes": 0}',

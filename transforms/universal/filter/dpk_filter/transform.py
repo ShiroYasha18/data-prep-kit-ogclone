@@ -93,10 +93,10 @@ class FilterTransform(AbstractTableTransform):
 
         # ensure the path endswith("/") if they are not None
         self.input_arrow_folder = config.get(filter_input_arrow_folder_key, None)
-        if self.input_arrow_folder is not None:
+        if bool(self.input_arrow_folder.strip()):
             self.input_arrow_folder = self.input_arrow_folder if self.input_arrow_folder.endswith("/") else f"{self.input_arrow_folder}/"
         self.output_arrow_folder = config.get(filter_output_arrow_folder_key, None)
-        if self.output_arrow_folder is not None:
+        if bool(self.output_arrow_folder.strip()):
             self.output_arrow_folder = self.output_arrow_folder if self.output_arrow_folder.endswith("/") else f"{self.output_arrow_folder}/"
         
 
@@ -188,7 +188,7 @@ class FilterTransform(AbstractTableTransform):
         :param table: input table
         :return: list of output tables and custom statistics
         """
-        if self.input_arrow_folder is not None:
+        if bool(self.input_arrow_folder.strip()):
             TransformUtils.validate_columns(table=table, required=[self.doc_id_column_name])
         if file_name is not None:
             if not file_name.endswith(".parquet"):
@@ -314,14 +314,14 @@ class FilterTransformConfiguration(TransformConfiguration):
             f"--{filter_input_arrow_folder_cli_param}",
             type=str,
             required=False,
-            default=None,
+            default="",
             help="the input path to the .arrow files"
         )
         parser.add_argument(
             f"--{filter_output_arrow_folder_cli_param}",
             type=str,
             required=False,
-            default=None,
+            default="",
             help="the output path to the .arrow files"
         )
         parser.add_argument(
