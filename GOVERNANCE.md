@@ -52,11 +52,12 @@ The *Techincal Steering Committee (TSC) members* are committers who have additio
 Current TSC members (in alphabetic order):
 
 - [Shahrokh Daijavad](https://github.com/shahrokhDaijavad)
+- [Sophie Jin](https://github.com/sophie-jin)
 - [Maroun Touma](https://github.com/touma-I/)
 
 One of the TSC members is the chairperson of the TSC and should ensure the smooth running of the TSC. They do not have more voting power than other TSC members.
 
-Currently TBD is the chairperson of the TSC.
+Currently [Shahrokh Daijavad](https://github.com/shahrokhDaijavad) is the chairperson of the TSC.
 
 #### Process for becoming a TSC member
 
