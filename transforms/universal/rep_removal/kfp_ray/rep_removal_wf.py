@@ -21,29 +21,17 @@ from workflow_support.compile_utils import (
     ComponentUtils,
 )
 
-from python_apiserver_client.params import (
-        EnvironmentVariables,
-        EnvVarFrom,
-        EnvVarSource,
-)
+
+task_image = "quay.io/dataprep1/data-prep-kit/rep_removal-ray:latest"
 
 # the name of the job script
-EXEC_SCRIPT_NAME: str = "code_quality_transform_ray.py"
-PREFIX: str = ""
-
-task_image = "quay.io/dataprep1/data-prep-kit/code_quality-ray:latest"
-
-# The name of the secret that holds the HugginFace token
-HF_SECRET = "hf-secret"
-# The secret key that holds the HugginFace token
-HF_SECRET_KEY = "hf-token"
+EXEC_SCRIPT_NAME: str = "-m dpk_rep_removal.ray.runtime"
 
 # components
-base_kfp_image = "quay.io/dataprep1/data-prep-kit/kfp-data-processing:latest"
+base_kfp_image = "quay.io/dataprep1/data-prep-kit/kfp-data-processing_v2:latest"
 
 # path to kfp component specifications files
 component_spec_path = os.getenv("KFP_COMPONENT_SPEC_PATH", DEFAULT_KFP_COMPONENT_SPEC_PATH)
-
 
 # compute execution parameters. Here different transforms might need different implementations. As
 # a result, instead of creating a component we are creating it in place here.
@@ -53,12 +41,17 @@ def compute_exec_params_func(
     data_s3_config: str,
     data_max_files: int,
     data_num_samples: int,
+    data_checkpointing: bool,
     runtime_pipeline_id: str,
     runtime_job_id: str,
     runtime_code_location: dict,
-    cq_contents_column_name: str,
-    cq_language_column_name: str,
-    cq_tokenizer: str,
+    rep_removal_contents_column_name: str,
+    rep_removal_dedup_level_name: str,
+    rep_removal_length_thresh: int,
+    rep_removal_frequency_threshold: int,
+    rep_removal_retain_first_copy: bool,
+    rep_removal_tokenize: bool,
+    rep_removal_num_threads: int,
 ) -> dict:
     from runtime_utils import KFPUtils
 
@@ -66,14 +59,19 @@ def compute_exec_params_func(
         "data_s3_config": data_s3_config,
         "data_max_files": data_max_files,
         "data_num_samples": data_num_samples,
+        "data_checkpointing": data_checkpointing,
         "runtime_num_workers": KFPUtils.default_compute_execution_params(str(worker_options), str(actor_options)),
         "runtime_worker_options": str(actor_options),
         "runtime_pipeline_id": runtime_pipeline_id,
         "runtime_job_id": runtime_job_id,
         "runtime_code_location": str(runtime_code_location),
-        "cq_contents_column_name": cq_contents_column_name,
-        "cq_language_column_name": cq_language_column_name,
-        "cq_tokenizer": cq_tokenizer,
+        "rep_removal_contents_column_name": rep_removal_contents_column_name,
+        "rep_removal_dedup_level_name": rep_removal_dedup_level_name,
+        "rep_removal_length_thresh": str(rep_removal_length_thresh),
+        "rep_removal_frequency_threshold": str(rep_removal_frequency_threshold),
+        "rep_removal_retain_first_copy": str(rep_removal_retain_first_copy),
+        "rep_removal_tokenize": str(rep_removal_tokenize),
+        "rep_removal_num_threads": str(rep_removal_num_threads),
     }
 
 
@@ -88,7 +86,6 @@ if os.getenv("KFPv2", "0") == "1":
 else:
     compute_exec_params_op = comp.create_component_from_func(func=compute_exec_params_func, base_image=base_kfp_image)
 
-
 # create Ray cluster
 create_ray_op = comp.load_component_from_file(component_spec_path + "createRayClusterComponent.yaml")
 # execute job
@@ -97,47 +94,51 @@ execute_ray_jobs_op = comp.load_component_from_file(component_spec_path + "execu
 cleanup_ray_op = comp.load_component_from_file(component_spec_path + "deleteRayClusterComponent.yaml")
 
 # Task name is part of the pipeline name, the ray cluster name and the job name in DMF.
-TASK_NAME: str = "code_quality"
+TASK_NAME: str = "rep_removal"
 
-# HuggingFace token is exported as environment variables in Ray node pods.
-# Alternatively, the secret name can be passed to the KFP component,
-# which will set it as an environment variable in the Ray nodes.
-# In this option the secret name can be set at runtime
-# but is dependent on the KFP version.
-env_v = EnvVarFrom(source=EnvVarSource.SECRET, name=HF_SECRET, key=HF_SECRET_KEY)
-envs = EnvironmentVariables(from_ref={"HF_READ_ACCESS_TOKEN": env_v})
 
-# Pipeline to invoke execution on remote resource
 @dsl.pipeline(
     name=TASK_NAME + "-ray-pipeline",
-    description="Pipeline for code quality task",
+    description="Pipeline for text repetition removal task",
 )
-def code_quality(
+def rep_removal(
     # Ray cluster
-    ray_name: str = "code_quality-kfp-ray",  # name of Ray cluster
-    ray_run_id_KFPv2: str = "",   # Ray cluster unique ID used only in KFP v2
+    ray_name: str = "rep_removal-kfp-ray",  # name of Ray cluster
+    ray_run_id_KFPv2: str = "",  # Ray cluster unique ID used only in KFP v2
     # Add image_pull_secret and image_pull_policy to ray workers if needed
-    ray_head_options: dict = {"cpu": 1, "memory": 4, "image": task_image, "environment": envs.to_dict()},
-    ray_worker_options: dict = {"replicas": 2, "max_replicas": 2, "min_replicas": 2, "cpu": 2, "memory": 4, "image": task_image, "environment": envs.to_dict()},
+    ray_head_options: dict = {"cpu": 16, "memory": 16, "image": task_image},
+    ray_worker_options: dict = {
+        "replicas": 1,
+        "max_replicas": 1,
+        "min_replicas": 1,
+        "cpu": 16,
+        "memory": 16,
+        "image": task_image,
+    },
     server_url: str = "http://kuberay-apiserver-service.kuberay.svc.cluster.local:8888",
     # data access
-    data_s3_config: str = "{'input_folder': 'test/code_quality/input/', 'output_folder': 'test/code_quality/output/'}",
+    data_s3_config: str = "{'input_folder': 'test/rep_removal/input/', 'output_folder': 'test/rep_removal/output/'}",
     data_s3_access_secret: str = "s3-secret",
     data_max_files: int = -1,
-    data_num_samples: int = -1,
+    data_num_samples: int = 1,
+    data_checkpointing: bool = False,
     # orchestrator
-    runtime_actor_options: dict = {'num_cpus': 0.8},
-    runtime_pipeline_id: str = "runtime_pipeline_id",
-    runtime_code_location: dict = {'github': 'github', 'commit_hash': '12345', 'path': 'path'},
-    # code quality parameters
-    cq_contents_column_name: str = "contents",
-    cq_language_column_name: str = "language",
-    cq_tokenizer: str = "codeparrot/codeparrot",
+    runtime_actor_options: dict = {"num_cpus": 0.8},
+    runtime_pipeline_id: str = "pipeline_id",
+    runtime_code_location: dict = {"github": "github", "commit_hash": "12345", "path": "path"},
+    # rep_removal parameters
+    rep_removal_contents_column_name: str = "text",
+    rep_removal_dedup_level_name: str = "parquet",
+    rep_removal_length_thresh: int = 50,
+    rep_removal_frequency_threshold: int = 1,
+    rep_removal_retain_first_copy: bool = True,
+    rep_removal_tokenize: bool = True,
+    rep_removal_num_threads: int = 10,
     # additional parameters
     additional_params: str = '{"wait_interval": 2, "wait_cluster_ready_tmout": 400, "wait_cluster_up_tmout": 300, "wait_job_ready_tmout": 400, "wait_print_tmout": 30, "http_retries": 5, "delete_cluster_delay_minutes": 0}',
 ):
     """
-    Pipeline to execute Code Quality transform
+    Pipeline to execute rep_removal transform
     :param ray_name: name of the Ray cluster
     :param ray_run_id_KFPv2: a unique string id used for the Ray cluster, applicable only in KFP v2.
     :param ray_head_options: head node options, containing the following:
@@ -169,9 +170,14 @@ def code_quality(
     :param data_num_samples - num samples to process
     :param runtime_actor_options - actor options
     :param runtime_pipeline_id - pipeline id
-    :param cq_contents_column_name - Name of the column holds the data to process
-    :param cq_language_column_name - Name of the column holds the programming language details
-    :param cq_tokenizer - Name or path to the tokenizer
+    :param runtime_code_location - code location
+    :param rep_removal_contents_column_name - Name of the column holding the document text
+    :param rep_removal_dedup_level_name - Name of the type of file to process.
+    :param rep_removal_length_thresh - Length threshold for processing
+    :param rep_removal_frequency_threshold - Frequency threshold for processing.
+    :param rep_removal_retain_first_copy - Boolean value for whether to retain first copy
+    :param rep_removal_tokenize - Boolean value for whether to tokenize
+    :param rep_removal_num_threads - Value for number of threads to use for processing
     :return: None
     """
     # In KFPv2 dsl.RUN_ID_PLACEHOLDER is deprecated and cannot be used since SDK 2.5.0. On another hand we cannot create
@@ -179,13 +185,17 @@ def code_quality(
     # https://github.com/kubeflow/pipelines/issues/10187. Therefore, meantime the user is requested to insert
     # a unique string created at run creation time.
     if os.getenv("KFPv2", "0") == "1":
-        print("WARNING: the ray cluster name can be non-unique at runtime, please do not execute simultaneous Runs of the "
-              "same version of the same pipeline !!!")
+        print(
+            "WARNING: the ray cluster name can be non-unique at runtime, please do not execute simultaneous Runs of the "
+            "same version of the same pipeline !!!"
+        )
         run_id = ray_run_id_KFPv2
     else:
         run_id = dsl.RUN_ID_PLACEHOLDER
     # create clean_up task
-    clean_up_task = cleanup_ray_op(ray_name=ray_name, run_id=run_id, server_url=server_url, additional_params=additional_params)
+    clean_up_task = cleanup_ray_op(
+        ray_name=ray_name, run_id=run_id, server_url=server_url, additional_params=additional_params
+    )
     ComponentUtils.add_settings_to_component(clean_up_task, ONE_HOUR_SEC * 2)
     # pipeline definition
     with dsl.ExitHandler(clean_up_task):
@@ -196,12 +206,17 @@ def code_quality(
             data_s3_config=data_s3_config,
             data_max_files=data_max_files,
             data_num_samples=data_num_samples,
+            data_checkpointing=data_checkpointing,
             runtime_pipeline_id=runtime_pipeline_id,
             runtime_job_id=run_id,
             runtime_code_location=runtime_code_location,
-            cq_contents_column_name=cq_contents_column_name,
-            cq_language_column_name=cq_language_column_name,
-            cq_tokenizer=cq_tokenizer,
+            rep_removal_contents_column_name=rep_removal_contents_column_name,
+            rep_removal_dedup_level_name=rep_removal_dedup_level_name,
+            rep_removal_length_thresh=rep_removal_length_thresh,
+            rep_removal_frequency_threshold=rep_removal_frequency_threshold,
+            rep_removal_retain_first_copy=rep_removal_retain_first_copy,
+            rep_removal_tokenize=rep_removal_tokenize,
+            rep_removal_num_threads=rep_removal_num_threads,
         )
 
         ComponentUtils.add_settings_to_component(compute_exec_params, ONE_HOUR_SEC * 2)
@@ -222,17 +237,15 @@ def code_quality(
             ray_name=ray_name,
             run_id=run_id,
             additional_params=additional_params,
-            # note that the parameters below are specific for NOOP transform
             exec_params=compute_exec_params.output,
             exec_script_name=EXEC_SCRIPT_NAME,
             server_url=server_url,
         )
         ComponentUtils.add_settings_to_component(execute_job, ONE_WEEK_SEC)
         ComponentUtils.set_s3_env_vars_to_component(execute_job, data_s3_access_secret)
-
         execute_job.after(ray_cluster)
 
 
 if __name__ == "__main__":
     # Compiling the pipeline
-    compiler.Compiler().compile(code_quality, __file__.replace(".py", ".yaml"))
+    compiler.Compiler().compile(rep_removal, __file__.replace(".py", ".yaml"))
