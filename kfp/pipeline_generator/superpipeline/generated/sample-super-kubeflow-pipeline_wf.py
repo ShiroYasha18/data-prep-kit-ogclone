@@ -11,8 +11,6 @@ from workflow_support.compile_utils import (
     ComponentUtils,
 )
 
-# The secret name containing the s3 credentials.
-S3_SECRET = "s3-secret"
 
 # path to kfp component specifications files
 component_spec_path = os.getenv("KFP_COMPONENT_SPEC_PATH", DEFAULT_KFP_COMPONENT_SPEC_PATH)
@@ -39,7 +37,7 @@ def super_pipeline(
     p2_pipeline_input_parent_path: str = "test/doc_id/input/",
     p2_pipeline_output_parent_path: str = "test/super/output/",
     p2_pipeline_parent_path_suffix: str = "",
-    p2_pipeline_data_s3_access_secret: str = S3_SECRET,
+    p2_pipeline_data_s3_access_secret: str = "s3-secret",
     # doc_id step parameters
     p3_name: str = "doc_id",
     p3_skip: bool = False,
