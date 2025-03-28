@@ -17,7 +17,7 @@ We will demonstrate the following:
 The code can be run on either 
 
 1.  Google colab: very easy to run; no local setup needed.
-2.  On your local Python environment.  Here is a quick guide.  You can  find instructions for latest version [here](../../../README.md#-getting-started)
+2.  On your local Python environment.  You can  find instructions [here](../../doc/quick-start/quick-start.md).  Here is a quick guide.
 
 You can use either [Anaconda](https://www.anaconda.com/download/) or [Miniforge](https://github.com/conda-forge/miniforge) to create your Python environment.
 
