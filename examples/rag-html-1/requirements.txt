@@ -19,7 +19,6 @@ llama-index-vector-stores-milvus
 ## utils
 humanfriendly
 pandas
-mimetypes-magic
 nest-asyncio
 
 ## jupyter and friends
