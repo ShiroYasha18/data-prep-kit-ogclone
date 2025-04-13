@@ -127,8 +127,8 @@ def readability(
     runtime_pipeline_id: str = "pipeline_id",
     runtime_code_location: dict = {"github": "github", "commit_hash": "12345", "path": "path"},
     # doc id parameters
-    readability_contents_column_name= "contents",
-    readability_score_list= "mcalpine_eflaw_textstat",
+    readability_contents_column_name: str = "contents",
+    readability_score_list: str = "mcalpine_eflaw_textstat",
     # additional parameters
     additional_params: str = '{"wait_interval": 2, "wait_cluster_ready_tmout": 400, "wait_cluster_up_tmout": 300, "wait_job_ready_tmout": 400, "wait_print_tmout": 30, "http_retries": 5, "delete_cluster_delay_minutes": 0}',
 ):
