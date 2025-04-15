@@ -33,9 +33,7 @@ EXEC_SCRIPT_NAME: str = "-m dpk_extreme_tokenized.ray.runtime"
 base_kfp_image = "quay.io/dataprep1/data-prep-kit/kfp-data-processing:latest"
 
 # path to kfp component specifications files
-component_spec_path = os.getenv(
-   "KFP_COMPONENT_SPEC_PATH", DEFAULT_KFP_COMPONENT_SPEC_PATH
-)
+component_spec_path = os.getenv("KFP_COMPONENT_SPEC_PATH", DEFAULT_KFP_COMPONENT_SPEC_PATH)
 
 
 # compute execution parameters. Here different transforms might need different implementations. As
@@ -102,7 +100,7 @@ TASK_NAME: str = "extreme_tokenized"
 def extreme_tokenized(
     # Ray cluster
     ray_name: str = "extreme_tokenized-kfp-ray",  # name of Ray cluster
-    ray_run_id_KFPv2: str = "",   # Ray cluster unique ID used only in KFP v2
+    ray_run_id_KFPv2: str = "",  # Ray cluster unique ID used only in KFP v2
     # Add image_pull_secret and image_pull_policy to ray workers if needed
     ray_head_options: dict = {"cpu": 1, "memory": 4, "image": task_image},
     ray_worker_options: dict = {
@@ -128,7 +126,7 @@ def extreme_tokenized(
     runtime_code_location: dict = {"github": "github", "commit_hash": "12345", "path": "path"},
     # doc id parameters
     et_contents_column_name: str = "text",
-    et_arrow_path: str = "test/extreme_tokenized/input/arrow",
+    et_arrow_path: str = "/home/ray/dpk_extreme_tokenized/arrow",
     # additional parameters
     additional_params: str = '{"wait_interval": 2, "wait_cluster_ready_tmout": 400, "wait_cluster_up_tmout": 300, "wait_job_ready_tmout": 400, "wait_print_tmout": 30, "http_retries": 5, "delete_cluster_delay_minutes": 0}',
 ):
@@ -177,8 +175,10 @@ def extreme_tokenized(
     # https://github.com/kubeflow/pipelines/issues/10187. Therefore, meantime the user is requested to insert
     # a unique string created at run creation time.
     if os.getenv("KFPv2", "0") == "1":
-        print("WARNING: the ray cluster name can be non-unique at runtime, please do not execute simultaneous Runs of the "
-              "same version of the same pipeline !!!")
+        print(
+            "WARNING: the ray cluster name can be non-unique at runtime, please do not execute simultaneous Runs of the "
+            "same version of the same pipeline !!!"
+        )
         run_id = ray_run_id_KFPv2
     else:
         run_id = dsl.RUN_ID_PLACEHOLDER
@@ -230,10 +230,10 @@ def extreme_tokenized(
         ComponentUtils.add_settings_to_component(execute_job, ONE_WEEK_SEC)
         if os.getenv("KFPv2", "0") == "1":
             from kfp import kubernetes
-            
+
             # FIXME: Due to kubeflow/pipelines#10914, secret names cannot be provided as pipeline arguments.
             # As a workaround, the secret name is hard coded.
-            env2key = ComponentUtils.set_secret_key_to_env(prefix="jjj")
+            env2key = ComponentUtils.set_secret_key_to_env()
             kubernetes.use_secret_as_env(task=execute_job, secret_name=S3_SECRET, secret_key_to_env=env2key)
         else:
             ComponentUtils.set_s3_env_vars_to_component(execute_job, data_s3_secret)
