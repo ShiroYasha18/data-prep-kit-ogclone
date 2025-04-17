@@ -157,7 +157,13 @@ def environment_variables_decoder(dct: dict[str, Any]) -> EnvironmentVariables:
             fr[k] = env_var_from_decoder(v)
     return EnvironmentVariables(key_value=keyvalues, from_ref=fr)
 
+
 def environment_variables_from_secrets(secretsList: list [dict[str, any]]) -> EnvironmentVariables:
+    """
+    Create environment variables from from list of dictionaries
+    :param dct: dictionary representations of environment variables
+    :return: environment variables
+    """
     from_ref={}
     for secret in secretsList:
         for name, data in secret.items():
