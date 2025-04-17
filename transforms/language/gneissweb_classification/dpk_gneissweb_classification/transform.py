@@ -69,7 +69,7 @@ class ClassificationTransform(AbstractTableTransform):
         # of ClassificationTransformConfiguration class
         super().__init__(config)
         
-        self.model_credential = config.get(model_credential_cli_param, os.environ.get('HF_READ_ACCESS_TOKEN', "PUT YOUR OWN HUGGINGFACE CREDENTIAL"))
+        self.model_credential = config.get(model_credential_cli_param, os.environ.get('HF_READ_ACCESS_TOKEN', None))
         self.model_file_name = ast.literal_eval(config.get(model_file_name_cli_param)[0])
         self.model_url = ast.literal_eval(config.get(model_url_cli_param)[0])
         self.n_processes = config.get(n_processes_cli_param, default_n_processes)
