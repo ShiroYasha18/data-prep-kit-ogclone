@@ -21,6 +21,7 @@
 # limitations under the License.
 
 ################################################################################
+HEADER_CLEANSER_PARAMS = "header_cleanser"
 
 import concurrent.futures
 from functools import partial
@@ -223,8 +224,8 @@ class HeaderCleanserTransform(AbstractTableTransform):
         super().__init__(config)
 
         self.column_name = config.get(COLUMN_KEY, DEFAULT_COLUMN)
-        self.license_remove = config.get(LICENSE_KEY, DEFAULT_LICENSE)
-        self.copyright_remove = config.get(COPYRIGHT_KEY, DEFAULT_COPYRIGHT)
+        self.license = config.get(LICENSE_KEY, DEFAULT_LICENSE)
+        self.copyright = config.get(COPYRIGHT_KEY, DEFAULT_COPYRIGHT)
         self.document_id_column_name = config.get(DOCUMENT_ID_COLUMN_KEY, DEFAULT_DOCUMENT_ID_COLUMN)
         n_processes = config.get(N_PROCESSES_KEY, DEFAULT_N_PROCESSES)
         self.n_processes = (
@@ -252,13 +253,13 @@ class HeaderCleanserTransform(AbstractTableTransform):
             ids = list(range(len(contents)))
         ids_contents = list(zip(ids, contents))
 
-        if self.license_remove and self.copyright_remove:
+        if self.license and self.copyright:
             f = remove_license_copyright
 
-        elif self.copyright_remove:
+        elif self.copyright:
             f = remove_copyright
 
-        elif self.license_remove:
+        elif self.license:
             f = remove_license
 
         else:
@@ -356,8 +357,3 @@ class HeaderCleanserTransformConfiguration(TransformConfiguration):
         captured = CLIArgumentProvider.capture_parameters(args, cli_prefix, False)
         self.params = self.params | captured
         return True
-
-
-class HeaderCleanserPythonTransformConfiguration(PythonTransformRuntimeConfiguration):
-    def __init__(self):
-        super().__init__(transform_config=HeaderCleanserTransformConfiguration())
