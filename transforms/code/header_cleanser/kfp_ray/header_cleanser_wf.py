@@ -254,4 +254,4 @@ def header_cleanser(
 
 if __name__ == "__main__":
     # Compiling the pipeline
-    compiler.Compiler().compile(header_cleanser, __file__.replace(".py", ".yaml"))
+
