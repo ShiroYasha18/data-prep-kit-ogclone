@@ -1,3 +1,4 @@
+/**/.idea/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -105,10 +106,10 @@ celerybeat.pid
 .env
 .venv
 env/
-venv/
+**/venv/
 ENV/
 env.bak/
-venv.bak/
+**/venv.bak/
 
 # Spyder project settings
 .spyderproject
@@ -127,3 +128,25 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+
+.project
+**/*.swp
+**/.pydevproject
+.DS_Store
+.directory
+
+
+**/*.back
+**/makeenv
+**/*.yaml
+
+# Ignore VSCode folder
+.vscode/
+
+# Ignore artifacts directory created by the `make save-images` target
+artifacts/
+
+*.lock
+
+*.db

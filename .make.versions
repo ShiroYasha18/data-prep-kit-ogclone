@@ -1,0 +1,66 @@
+################################################################################
+# Here we attempt to capture/define all the version numbers used across the 
+# repository in Makefile format.  These are generally considered the version
+# numbers TO BE published on the NEXT release/publishing of artifacts.
+#
+# NOTE: If you modify any of the version numbers, you MUST run "make set-versions"
+# from the top of the repo to have the new versions applied throughout the repo.
+#
+################################################################################
+
+# See below for versions the repo depends on
+
+
+# This major versions is generally changed manually when a breaking change to apis is made in the libraries, for example.
+DPK_MAJOR_VERSION=0
+# The minor version is incremented manually when significant features have been added that are backward compatible with the previous major.minor release.
+DPK_MINOR_VERSION=2
+# The minor version is incremented AUTOMATICALLY by the release.sh script when a new release is set.
+DPK_MICRO_VERSION=5
+# The suffix is generally always set in the main/development branch and only nulled out when creating release branches.
+# It can be manually incremented, for example, to allow publishing a new intermediate version wheel to pypi. 
+DPK_VERSION_SUFFIX=.dev0
+
+DPK_VERSION=$(DPK_MAJOR_VERSION).$(DPK_MINOR_VERSION).$(DPK_MICRO_VERSION)$(DPK_VERSION_SUFFIX)
+
+# publish docker images with latest tag
+ifeq ($(DPK_VERSION_SUFFIX), )
+	DOCKER_IMAGE_VERSION?=$(DPK_VERSION)
+else
+	DOCKER_IMAGE_VERSION?=latest
+endif
+
+# Data prep lab wheel version
+DPK_LIB_VERSION=$(DPK_VERSION)
+DPK_LIB_KFP_VERSION=$(DPK_VERSION)
+DPK_LIB_KFP_VERSION_v2=$(DPK_VERSION)
+DPK_LIB_KFP_SHARED=$(DPK_VERSION)
+
+DPK_CONNECTOR_VERSION=0.2.4.dev0
+
+################## ################## ################## ################## ################## ##################
+# Begin versions that the repo depends on. 
+
+KFP_v2=2.2.0
+KFP_v2_SDK=2.8.0
+KFP_v1=1.8.5
+KFP_v1_SDK=1.8.22
+RAY=2.36.1
+SPARK_VERSION=3.5.2
+
+REQUIRED_PYTHON_VERSIONS=">=3.10,<3.13"
+
+ifeq ($(KFPv2), 1)
+        WORKFLOW_SUPPORT_LIB=kfp_v2_workflow_support
+else
+        WORKFLOW_SUPPORT_LIB=kfp_v1_workflow_support
+endif
+
+################################################################################
+# This defines the transforms' package version number as would be used
+# when publishing the wheel.  In general, only the micro version
+# number should be advanced relative to the DPK_VERSION. 
+#
+# If you change the versions numbers, be sure to run "make set-versions" to 
+# update version numbers across the transform (e.g., pyproject.toml).
+TRANSFORMS_PKG_VERSION=1.1.1.dev0
