@@ -14,9 +14,9 @@ This transform merges all the text columns specified by the user into a single c
 
 | Configuration Parameters                    | Data Type | Description                      |
 |---------------------------------------------|-----------|----------------------------------|
-| coillpase_input_columns | list       | List of columns that need to be merged together |
-| coillpase_output_column | str        | Name of the resulting column that will contain the merged text     |
-| coillpase_field_seperator| str       | Character used to sperate the merged content. Default value is '.' |
+| collpase_input_columns | list       | List of columns that need to be merged together |
+| collpase_output_column | str        | Name of the resulting column that will contain the merged text     |
+| collpase_field_seperator| str       | Character used to sperate the merged content. Default value is '\n' |
 
 
 ## Usage

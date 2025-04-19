@@ -49,7 +49,7 @@ class CollapseTransform(AbstractTableTransform):
         
         self.input_columns = config.get(input_columns)
         self.output_column = config.get(output_column)
-        self.field_seperator = config.get(field_seperator," ")
+        self.field_seperator = config.get(field_seperator,"\n")
         self.retain_all = config.get(retain_all, False)
         logger.debug(f"input columns: {self.input_columns} "
                     f"output column: {self.output_column} "
@@ -119,7 +119,7 @@ class CollapseTransformConfiguration(TransformConfiguration):
         parser.add_argument(
             f"--{field_seperator}",
             type=str,
-            default=".",
+            default="\n",
             help="Delimiter used to seperate concatenated content"
         )
         parser.add_argument(
