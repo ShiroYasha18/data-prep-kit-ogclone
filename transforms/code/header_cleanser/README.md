@@ -43,7 +43,7 @@ python -m dpk_header_cleanser.runtime \
 
 ## Sample Notebook
 
-[header_cleanser.ipynb](../header_cleanser.ipynb)
+[header_cleanser.ipynb](./header_cleanser.ipynb)
 
 
 ## Testing
