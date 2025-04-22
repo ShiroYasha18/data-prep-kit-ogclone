@@ -44,7 +44,7 @@ class TestHeaderCleanserTransform(AbstractTransformLauncherTest):
             launcher,
             config1,
             os.path.join(basedir, "input"),
-            os.path.join(basedir, "expected", "license-and-copyright-local")
+            os.path.join(basedir, "expected-python", "license-and-copyright-local")
         ))
 
         # Case 2: license only
@@ -57,7 +57,7 @@ class TestHeaderCleanserTransform(AbstractTransformLauncherTest):
             launcher,
             config2,
             os.path.join(basedir, "input"),
-            os.path.join(basedir, "expected", "license-local")
+            os.path.join(basedir, "expected-python", "license-local")
         ))
 
         # Case 3: copyright only
@@ -70,7 +70,7 @@ class TestHeaderCleanserTransform(AbstractTransformLauncherTest):
             launcher,
             config3,
             os.path.join(basedir, "input"),
-            os.path.join(basedir, "expected", "copyright-local")
+            os.path.join(basedir, "expected-python", "copyright-local")
         ))
 
         return fixtures
