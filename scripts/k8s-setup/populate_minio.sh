@@ -19,7 +19,7 @@ echo "creating test bucket"
 mc mb kfp/test
 echo "copying data"
 # code modules
-mc cp --recursive ${REPOROOT}/transforms/code/code_quality/ray/test-data/input/ kfp/test/code_quality/input
+mc cp --recursive ${REPOROOT}/transforms/code/code_quality/test-data/input/ kfp/test/code_quality/input
 mc cp --recursive ${REPOROOT}/transforms/code/code2parquet/ray/test-data/input/data-processing-lib.zip kfp/test/code2parquet/input
 mc cp --recursive ${REPOROOT}/transforms/code/code2parquet/ray/test-data/languages/ kfp/test/code2parquet/languages
 mc cp --recursive ${REPOROOT}/transforms/code/proglang_select/ray/test-data/input/ kfp/test/proglang_select/input
@@ -39,6 +39,8 @@ mc cp --recursive ${REPOROOT}/transforms/language/html2parquet/test-data/input/t
 mc cp --recursive ${REPOROOT}/transforms/language/enrichment/test-data/input/ kfp/test/enrichment/input
 mc cp --recursive ${REPOROOT}/transforms/language/ml_filter/test-data/input/ kfp/test/ml_filter/input
 mc cp --recursive ${REPOROOT}/transforms/language/gneissweb_classification/test-data/input/ kfp/test/gneissweb_classification/input
+mc cp --recursive ${REPOROOT}/transforms/language/extreme_tokenized/test-data/input/ kfp/test/extreme_tokenized/input
+mc cp --recursive ${REPOROOT}/transforms/language/readability/test-data/input/ kfp/test/readability/input
 # universal
 mc cp --recursive ${REPOROOT}/transforms/universal/doc_id/test-data/input/ kfp/test/doc_id/input
 mc cp --recursive ${REPOROOT}/transforms/universal/ededup/test-data/input/ kfp/test/ededup/input
