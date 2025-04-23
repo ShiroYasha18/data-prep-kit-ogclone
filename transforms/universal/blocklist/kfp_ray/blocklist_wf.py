@@ -14,11 +14,16 @@ import os
 import kfp.compiler as compiler
 import kfp.components as comp
 import kfp.dsl as dsl
-from kubernetes import client as k8s_client
-from workflow_support.compile_utils import ONE_HOUR_SEC, ONE_WEEK_SEC, ComponentUtils
+#from kubernetes import client as k8s_client
+from workflow_support.compile_utils import (
+    DEFAULT_KFP_COMPONENT_SPEC_PATH,
+    ONE_HOUR_SEC,
+    ONE_WEEK_SEC,
+    ComponentUtils,
+)
 
 
-task_image = "us.icr.io/cil15-shared-registry/preprocessing-pipelines/blocklist-ray:0.2.0"
+task_image = "quay.io/dataprep1/data-prep-kit/blocklist-ray:latest"
 
 # The secret name containing the s3 credentials.
 S3_SECRET = "s3-secret"  # pragma: allowlist secret
@@ -26,10 +31,11 @@ S3_SECRET = "s3-secret"  # pragma: allowlist secret
 # the name of the job script
 EXEC_SCRIPT_NAME: str = "-m dpk_blocklist.ray.transform"
 # components
-base_kfp_image = "us.icr.io/cil15-shared-registry/preprocessing-pipelines/kfp-data-processing:latest"
+base_kfp_image = "quay.io/dataprep1/data-prep-kit/kfp-data-processing:latest"
 
 # path to kfp component specifications files
-component_spec_path = "../../../../kfp/kfp_ray_components/"
+component_spec_path = os.getenv("KFP_COMPONENT_SPEC_PATH", DEFAULT_KFP_COMPONENT_SPEC_PATH)
+
 
 # compute execution parameters. Here different transforms might need different implementations. As
 # a result, instead of creating a component we are creating it in place here.
@@ -56,13 +62,13 @@ def compute_exec_params_func(
         "data_max_files": data_max_files,
         "data_num_samples": data_num_samples,
         "data_checkpointing": data_checkpointing,
-        "data_data_sets": data_data_sets,
+        "data_data_sets": data_data_sets.strip(),
         "data_files_to_use": data_files_to_use,
-        "runtime_num_workers": KFPUtils.default_compute_execution_params(worker_options, actor_options),
-        "runtime_worker_options": actor_options,
+        "runtime_num_workers": KFPUtils.default_compute_execution_params(str(worker_options), str(actor_options)),
+        "runtime_worker_options": str(actor_options),
         "runtime_pipeline_id": runtime_pipeline_id,
         "runtime_job_id": runtime_job_id,
-        "runtime_code_location": runtime_code_location,
+        "runtime_code_location": str(runtime_code_location),
         "blocklist_blocked_domain_list_path": blocklist_blocked_domain_list_path,
         "blocklist_annotation_column_name": blocklist_annotation_column_name,
         "blocklist_source_url_column_name": blocklist_source_url_column_name,
@@ -137,7 +143,7 @@ def blocklist(
     blocklist_annotation_column_name: str = "blocklisted",
     blocklist_source_url_column_name: str = "title",
     # additional parameters
-    additional_params: str = '{"wait_interval": 2, "wait_cluster_ready_tmout": 400, "wait_cluster_up_tmout": 300, "wait_job_ready_tmout": 400, "wait_print_tmout": 30, "http_retries": 5}',
+    additional_params: str = '{"wait_interval": 2, "wait_cluster_ready_tmout": 400, "wait_cluster_up_tmout": 300, "wait_job_ready_tmout": 400, "wait_print_tmout": 30, "http_retries": 5, "delete_cluster_delay_minutes": 0}',
 ):
     """
     Pipeline to execute NOOP transform
@@ -175,9 +181,21 @@ def blocklist(
     :param source_url_column_name - source document url column
     :return: None
     """
-    # create clean_up task
-    clean_up_task = cleanup_ray_op(ray_name=ray_name, run_id=run_id, server_url=server_url)
-    ComponentUtils.add_settings_to_component(clean_up_task, 60)
+    # In KFPv2 dsl.RUN_ID_PLACEHOLDER is deprecated and cannot be used since SDK 2.5.0. On another hand we cannot create
+    # a unique string in a component (at runtime) and pass it to the `clean_up_task` of `ExitHandler`, due to
+    # https://github.com/kubeflow/pipelines/issues/10187. Therefore, meantime the user is requested to insert
+    # a unique string created at run creation time.
+    if os.getenv("KFPv2", "0") == "1":
+        print("WARNING: the ray cluster name can be non-unique at runtime, please do not execute simultaneous Runs of the "
+              "same version of the same pipeline !!!")
+        run_id = ray_run_id_KFPv2
+    else:
+        run_id = dsl.RUN_ID_PLACEHOLDER
+     # create clean_up task
+    clean_up_task = cleanup_ray_op(
+        ray_name=ray_name, run_id=run_id, server_url=server_url, additional_params=additional_params
+    )
+    ComponentUtils.add_settings_to_component(clean_up_task, ONE_HOUR_SEC * 2)
     # pipeline definition
     with dsl.ExitHandler(clean_up_task):
         # compute execution params
