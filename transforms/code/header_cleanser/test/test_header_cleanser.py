@@ -15,7 +15,7 @@ from data_processing.test_support.launch.transform_test import (
     AbstractTransformLauncherTest,
 )
 from data_processing.runtime.pure_python import PythonTransformLauncher
-from dpk_header_cleanser.runtime import HeaderCleanserRuntime
+from dpk_header_cleanser.runtime import HeaderCleanserPythonTransformConfiguration
 from dpk_header_cleanser.transform import (
     COLUMN_KEY,
     LICENSE_KEY,
@@ -31,7 +31,7 @@ class TestHeaderCleanserTransform(AbstractTransformLauncherTest):
 
     def get_test_transform_fixtures(self) -> list[tuple]:
         basedir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../test-data"))
-        launcher = PythonTransformLauncher(HeaderCleanserRuntime())
+        launcher = PythonTransformLauncher(HeaderCleanserPythonTransformConfiguration())
         fixtures = []
 
         # Case 1: both license & copyright
@@ -44,7 +44,7 @@ class TestHeaderCleanserTransform(AbstractTransformLauncherTest):
             launcher,
             config1,
             os.path.join(basedir, "input"),
-            os.path.join(basedir, "expected-python", "license-and-copyright-local")
+            os.path.join(basedir, "expected", "license-and-copyright-local")
         ))
 
         # Case 2: license only
@@ -57,7 +57,7 @@ class TestHeaderCleanserTransform(AbstractTransformLauncherTest):
             launcher,
             config2,
             os.path.join(basedir, "input"),
-            os.path.join(basedir, "expected-python", "license-local")
+            os.path.join(basedir, "expected", "license-local")
         ))
 
         # Case 3: copyright only
@@ -70,7 +70,7 @@ class TestHeaderCleanserTransform(AbstractTransformLauncherTest):
             launcher,
             config3,
             os.path.join(basedir, "input"),
-            os.path.join(basedir, "expected-python", "copyright-local")
+            os.path.join(basedir, "expected", "copyright-local")
         ))
 
         return fixtures

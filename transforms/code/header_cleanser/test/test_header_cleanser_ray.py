@@ -37,7 +37,7 @@ class TestHeaderCleanserTransform(AbstractTransformLauncherTest):
             "header_cleanser_copyright": True,
             "run_locally": True,
         }
-        fixtures.append((launcher, config1, basedir + "/input", basedir + "/expected-ray/license-and-copyright-local"))
+        fixtures.append((launcher, config1, basedir + "/input", basedir + "/expected/license-and-copyright-local"))
 
         # Case 2: license only
         config2 = {
@@ -46,7 +46,7 @@ class TestHeaderCleanserTransform(AbstractTransformLauncherTest):
             "header_cleanser_copyright": False,
             "run_locally": True,
         }
-        fixtures.append((launcher, config2, basedir + "/input", basedir + "/expected-ray/license-local"))
+        fixtures.append((launcher, config2, basedir + "/input", basedir + "/expected/license-local"))
 
         # Case 3: copyright only
         config3 = {
@@ -55,6 +55,6 @@ class TestHeaderCleanserTransform(AbstractTransformLauncherTest):
             "header_cleanser_copyright": True,
             "run_locally": True,
         }
-        fixtures.append((launcher, config3, basedir + "/input", basedir + "/expected-ray/copyright-local"))
+        fixtures.append((launcher, config3, basedir + "/input", basedir + "/expected/copyright-local"))
 
         return fixtures

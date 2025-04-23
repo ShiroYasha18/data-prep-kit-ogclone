@@ -18,3 +18,47 @@ TRANSFORM_NAME=$(shell basename `pwd`)
 TRANSFORM_PYTHON_SRC="-m dpk_$(TRANSFORM_NAME).runtime"
 TRANSFORM_RAY_SRC="-m dpk_$(TRANSFORM_NAME).ray.runtime"
 TRANSFORM_SPARK_SRC="-m dpk_$(TRANSFORM_NAME).spark.runtime"
+
+
+
+# Used primarily to regenerate expected files used by make Unit Test
+run-sample-cli:
+	make venv \
+	&& source venv/bin/activate \
+	&& python -m dpk_header_cleanser.runtime --data_local_config '{"input_folder": "test-data/input", "output_folder": "output/python/license-and-copyright-local"}' \
+			--header_cleanser_contents_column_name contents \
+			--header_cleanser_license True \
+			--header_cleanser_copyright True
+#
+	source venv/bin/activate \
+	&& python -m dpk_header_cleanser.runtime --data_local_config '{"input_folder": "test-data/input", "output_folder": "output/python/license-local"}' \
+			--header_cleanser_contents_column_name contents \
+			--header_cleanser_license True \
+			--header_cleanser_copyright False
+#
+	source venv/bin/activate \
+	&& python -m dpk_header_cleanser.runtime --data_local_config '{"input_folder": "test-data/input", "output_folder": "output/python/copyright-local"}' \
+			--header_cleanser_contents_column_name contents \
+			--header_cleanser_license False \
+			--header_cleanser_copyright True
+
+	source venv/bin/activate \
+	&& python -m dpk_header_cleanser.ray.runtime --data_local_config '{"input_folder": "test-data/input", "output_folder": "output/ray/license-and-copyright-local"}' \
+			--header_cleanser_contents_column_name contents \
+			--header_cleanser_license True \
+			--header_cleanser_copyright True \
+			--run_locally True
+#
+	source venv/bin/activate \
+	&& python -m dpk_header_cleanser.ray.runtime --data_local_config '{"input_folder": "test-data/input", "output_folder": "output/ray/license-local"}' \
+			--header_cleanser_contents_column_name contents \
+			--header_cleanser_license True \
+			--header_cleanser_copyright False \
+			--run_locally True
+#
+	source venv/bin/activate \
+	&& python -m dpk_header_cleanser.ray.runtime --data_local_config '{"input_folder": "test-data/input", "output_folder": "output/ray/copyright-local"}' \
+			--header_cleanser_contents_column_name contents \
+			--header_cleanser_license False \
+			--header_cleanser_copyright True \
+			--run_locally True
