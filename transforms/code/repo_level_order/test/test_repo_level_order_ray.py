@@ -12,12 +12,11 @@
 
 import os
 
+from dpk_repo_level_order.ray.runtime import RepoLevelOrderRayTransformConfiguration
 from data_processing.test_support.launch.transform_test import (
     AbstractTransformLauncherTest,
 )
 from data_processing_ray.runtime.ray import RayTransformLauncher
-from repo_level_order_transform import RepoLevelOrderRayTransformConfiguration
-
 
 class TestRepoLevelOrderingTransform(AbstractTransformLauncherTest):
     """
