@@ -16,7 +16,7 @@ import sys
 
 from data_processing.utils import ParamsUtils
 from data_processing_ray.runtime.ray import RayTransformLauncher
-from repo_level_order_transform import RepoLevelOrderRayTransformConfiguration
+from dpk_repo_level_order.ray.runtime import RepoLevelOrderRayTransformConfiguration
 
 
 def execute(tf_params, tf_flags, input_folder, output_folder):

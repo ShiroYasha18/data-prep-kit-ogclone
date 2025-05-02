@@ -1,15 +1,14 @@
-# Repo Level Order Ray Transform 
+# Repo Level Order Transform 
 
 Please see the set of
-[transform project conventions](../../../README.md#transform-project-conventions)
+[transform project conventions](../../README.md#transform-project-conventions)
 for details on general project conventions, transform configuration,
 testing and IDE set up.
 
 ## Summary 
 
-This transform does repository level packing of data and arranging them to prioritise semantic dependancies. This 
-was done to prepare long context data for [Scaling Granite Code Models to 128K Context](https://arxiv.org/pdf/2407.13739) 
-. Quoting the paper. 
+This transform does repository level packing of data and arranging them to prioritize semantic dependancies. This 
+was done to prepare long context data for [Scaling Granite Code Models to 128K Context](https://arxiv.org/pdf/2407.13739). Quoting from the paper:
 
 >To create long-context data, we develop a new approach that packs files from the same
 repository together, arranging them to prioritize semantic dependencies. We identify these
@@ -21,10 +20,10 @@ and build files first, followed by the ordered set of files with semantic depend
 finally the remaining non-connected files. These non-connected files are arranged according
 to their folder structure, using a depth-first search to traverse the repository. Finally, we
 determine the dominant programming language of a repository based on file extensions
-and presence of build files, to organise repo-ordered files by programming languages
+and presence of build files, to organise repo-ordered files by programming languages.
 
 
-This transform can group the data by `repo_name` and apply additional transformations like( sorting or output_by_language or combining rows) on the  grouped data.
+This transform can group the data by `repo_name` and apply additional transformations like sorting or output_by_language or combining rows on the  grouped data.
 This transform requires the input data to have at least the following columns: 
 
 - **repo name**: Name of the repo, it is used for grouping in this transform.
@@ -34,13 +33,13 @@ This transform requires the input data to have at least the following columns:
 - **language**: Programming language of content
 
 The input data for this transform should be in parquet format. The input data is expected to have code data arranged in rows
-such that each row represents a file. The required columns in the input data shoud correspond to a) repository name b) file path
+such that each row represents a file. The required columns in the input data shoud correspond to a) repository name b) file path, and 
 c) content. This transform supports searching the repo across the whole dataset and writing the files of a repo as a single 
 parquet file. 
 
-The transform gives the option to write the repo to file in the following ways.
+The transform gives the option to write the repo to file in the following ways:
 
-a) sort the repo content by file path and write a parquet with multiple rows
+a) sort the repo content by file path and write a parquet with multiple rows.
 
 b) sort the repo content by file path and write a parquet with a single combined row.
 
@@ -48,14 +47,13 @@ c) sort the repo content in semantic ordering and write the parquet with multipl
 
 d) sort the repo content in semantic ordering and write the parquet with a single combined row.
 
-Additionally this transform can grooup the repos in the folders named after the most dominant language in the repo. For more information on this transform, please refer to [here](https://arxiv.org/pdf/2407.13739).
+Additionally, this transform can group the repos in the folders named after the most dominant language in the repo. For more information on this transform, please refer to [here](https://arxiv.org/pdf/2407.13739).
 
 
 ## Configuration and command line Options
 
-This transform is dependant on ray runtime. 
 
-Transform Configuration.
+Transform Configuration:
 
 - For output:
    either the output is directly a file or if dominant language flag is enabled, it should output
@@ -76,38 +74,16 @@ Limitation of transform. This expects a flat input folder structure with parquet
 
 ### Launched Command Line Options 
 
-Ray runtime [launcher options](../../../../data-processing-lib/doc/launcher-options.md) are available.
+Ray runtime [launcher options](../../../data-processing-lib/doc/launcher-options.md) is available.
 
-### Running the samples
+### Using the CLI
 
-To run the samples, use the following `make` targets
-
-* `run-local-sample` - runs src/repo_level_order_local_ray.py
-
-These targets will activate the virtual environment and set up any configuration needed.
-Use the `-n` option of `make` to see the detail of what is done to run the sample.
-
-For example, 
-```sh
-
-make run-local-sample
-...
-```
-Then 
-```shell
-ls output
-```
-To see results of the transform.
-
-
-## Using the CLI
-
-1. Simplest Usage:
+1. Simplest usage, assuming a Ray runtime
 
 Running on local computer setup with data available on local filesystem.
 Sorting the data at repo level using default algorithm. (SORT_BY_PATH).
 In this configuration, the workers run locally, store is local.
-This is a recommended method if number of available cpus is less.
+This is a recommended method if number of available cpus is small.
 
 ```sh
 export INPUT_FOLDER="input_data_folder/"
@@ -117,7 +93,7 @@ export OUTPUT_FOLDER="output_data_folder/"
 local_conf="{'input_folder' : '$INPUT_FOLDER', 'output_folder' : '$OUTPUT_FOLDER'  }"
 rm -rf /tmp/mystore # remove if it exists
 
-python src/repo_level_order_transform_ray.py \
+python dpk_repo_level_order/ray/transform.py \
        --run_locally True \
        --data_local_config "$local_conf" \
        --repo_lvl_store_type  local  \
@@ -138,15 +114,15 @@ Recommended `repo_lvl_store_type` for cluster is 'ray'. We need to dedicate some
 ray store
 
 for example, if we have a ray cluster with 100 actors available. We can dedicate some for the store. Let us randomly
-use 35 for computation and 10 for store and let remaining free. 
+use 35 for computation and 10 for store and leave the remaining actors free. 
 
 NOTE: The transform reads parquet files in two stages and each stage has its own actor pool for computations. The 
 actor pool to read parquet data in the first stage is managed by the library and the actor pool used in the second stage
-is managed by the ray runtime of the transform. The number of actors in each pool is same and is configured using `--runtime_num_workers`.
-So we have to carefully choose number of actors required based on the number resources available. 
+is managed by the ray runtime of the transform. The number of actors in each pool is the same and is configured using `--runtime_num_workers`.
+So we have to carefully choose the number of actors required based on the number of resources available. 
 The number of workers/actors should be less than 35% of total resources available. 
 
-We need to add the following cli args:
+We need to add the following CLI args:
 
  `--runtime_num_workers 35` 
  `--repo_lvl_store_type "ray" --repo_lvl_store_ray_cpus 0.2 --repo_lvl_store_ray_nworkers 10` 
@@ -154,7 +130,7 @@ We need to add the following cli args:
 When we want the output with the following configuration enabled:
 
 > NOTE: store_backend=`s3/local` are persistent stores and retain the mappings stores in them, they need to be cleaned/deleted after use. It is recommented to use a different location for store if data is different. They are added to aid in large data processing in multiple stages.
-  store_backend=`ray`, is not presistent and ephimeral and does not retain any data. It is the simplest to use if resources are available.
+  store_backend=`ray` is not presistent and ephimeral and does not retain any data. It is the simplest to use if resources are available.
  
 
 ```sh
@@ -164,7 +140,7 @@ export OUTPUT_FOLDER="output_cos_bucket"
 s3_kreds="{ ... }" # in the deafult way used for all transforms. 
 s3_conf="{'input_folder' : '$INPUT_FOLDER', 'output_folder' : '$OUTPUT_FOLDER'  }"
 
-python src/repo_level_order_transform_ray.py \
+python dpk_repo_level_order/ray/transform.py \
        --run_locally True \
        --data_s3_cred "$s3_kreds" \
        --data_s3_config "$s3_conf" \
