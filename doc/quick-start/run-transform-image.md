@@ -38,10 +38,16 @@ the image at the above mount points.
 For example, using the locally built `resize` transform:
 
 ```shell
-docker run --rm -v ./test-data/input:/input -v ./output:/output resize-python:latest python -m dpk_resize.runtime --resize_max_rows_per_table=125 --data_local_config "{'input_folder'  : '/input', 'output_folder' : '/output'}" 
+docker run --rm \
+-v ./test-data/input:/input \
+-v ./output:/output \ 
+resize-python:latest \
+python -m dpk_resize.runtime \
+--resize_max_rows_per_table=125 \ 
+--data_local_config "{'input_folder'  : '/input', 'output_folder' : '/output'}" 
 
 ```
-Please note how transform-specific parameters for `resize` such as `max_rows_per_table` are used in the example above.  
+Please note how a transform-specific parameter for `resize` such as `max_rows_per_table` is used in the example above.  
 
 To run the quay.io located transform instead, substitute 
 
