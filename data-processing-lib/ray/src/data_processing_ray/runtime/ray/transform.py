@@ -24,7 +24,11 @@ from data_processing_ray.runtime.ray import (
 class Transform:
     def __init__(self, transform_config, **kwargs):
         self.params = {}
-        self.runtime = RayTransformRuntimeConfiguration(transform_config)
+        # In some instances when we only have a ray implementation
+        if isinstance(transform_config, RayTransformRuntimeConfiguration):
+            self.runtime=transform_config
+        else:
+            self.runtime = RayTransformRuntimeConfiguration(transform_config)
 
         for key in kwargs:
             self.params[key] = kwargs[key]
@@ -44,6 +48,7 @@ class Transform:
         except:
             pass
 
+    
     def transform(self):
         import sys
         sys.argv = ParamsUtils.dict_to_req(d=(self.params))
