@@ -11,7 +11,7 @@
 ################################################################################
 
 import argparse
-import ast
+import os
 
 from data_processing.utils import CLIArgumentProvider, ParamsUtils, get_logger
 
@@ -48,18 +48,6 @@ class TransformExecutionConfiguration(CLIArgumentProvider):
         parser.add_argument(f"--{runtime_cli_prefix}pipeline_id", type=str, default="pipeline_id", help="pipeline id")
         parser.add_argument(f"--{runtime_cli_prefix}job_id", type=str, default="job_id", help="job id")
 
-        help_example_dict = {
-            "github": ["https://github.com/somerepo", "Github repository URL."],
-            "commit_hash": ["1324", "github commit hash"],
-            "path": ["transforms/universal/code", "Path within the repository"],
-        }
-        parser.add_argument(
-            f"--{runtime_cli_prefix}code_location",
-            type=ast.literal_eval,
-            default=None,
-            help="AST string containing code location\n" + ParamsUtils.get_ast_help_text(help_example_dict),
-        )
-
     def apply_input_params(self, args: argparse.Namespace) -> bool:
         """
         Validate transformer specific parameters
@@ -75,7 +63,12 @@ class TransformExecutionConfiguration(CLIArgumentProvider):
             "job type": "pure python",
             "job id": captured["job_id"],
         }
-        self.code_location = captured["code_location"]
+        self.code_location = {"github": os.environ["GIT_URL"],
+                              "build-date": os.environ["BUILD_DATE"],
+                              "commit_hash": os.environ["GIT_COMMIT"],
+                              "path": os.environ["TRANSFORM_PATH"]
+                              }
+
         # print parameters
         logger.info(f"pipeline id {self.pipeline_id}")
         if self.print_params:
