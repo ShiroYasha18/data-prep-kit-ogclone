@@ -10,13 +10,13 @@ git checkout dev
 git pull
 git checkout -b pending-release/x.x.x     ## Replace x.x.x with the proper release tag
 ```
-From the main folder, edit the `.make.versions` and remove the suffix (e.g., dev0, dev1, ... ) for all the components being released.
+From the main folder, edit the [`.make.versions`](.make.versions) and remove the suffix (e.g., dev0, dev1, ... ) for all the components being released.
 
 ```
 make set-versions
 ```
 
-Edit the release notes `releases-notes.md`.
+Edit the release notes [`release-notes.md`](release-notes.md) and add bullet list of major enhancements and bug fixes included in this release.
 
 ```
 git add .
