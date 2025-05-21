@@ -11,6 +11,7 @@
 ################################################################################
 
 import argparse
+import ast
 import os
 
 from data_processing.utils import CLIArgumentProvider, ParamsUtils, get_logger
@@ -47,6 +48,18 @@ class TransformExecutionConfiguration(CLIArgumentProvider):
         """
         parser.add_argument(f"--{runtime_cli_prefix}pipeline_id", type=str, default="pipeline_id", help="pipeline id")
         parser.add_argument(f"--{runtime_cli_prefix}job_id", type=str, default="job_id", help="job id")
+
+        help_example_dict = {
+            "github": ["https://github.com/somerepo", "Github repository URL."],
+            "commit_hash": ["1324", "github commit hash"],
+            "path": ["transforms/universal/code", "Path within the repository"],
+        }
+        parser.add_argument(
+            f"--{runtime_cli_prefix}code_location",
+            type=ast.literal_eval,
+            default=None,
+            help="AST string containing code location\n" + ParamsUtils.get_ast_help_text(help_example_dict),
+        )
 
     def apply_input_params(self, args: argparse.Namespace) -> bool:
         """
