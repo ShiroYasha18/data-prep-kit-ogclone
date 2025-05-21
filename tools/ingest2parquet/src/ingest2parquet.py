@@ -188,7 +188,7 @@ def ingest2parquet():
     data_access_factory = DataAccessFactory()
     data_access_factory.add_input_params(parser)
 
-    args, _ = parser.parse_known_args()
+    args = parser.parse_args()
     data_access_factory.apply_input_params(args)
 
     # Creates a DataAccess object for accessing data.

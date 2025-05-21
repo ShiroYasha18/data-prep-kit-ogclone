@@ -209,7 +209,7 @@ if __name__ == "__main__":
     parser.add_argument("-if", "--input_folder", default="", type=str)
     parser.add_argument("-of", "--output_folder", default="", type=str)
 
-    args, _ = parser.parse_known_args()
+    args = parser.parse_args()
 
     invoke_sub_workflow(
         name=args.name,
