@@ -77,10 +77,12 @@ class TransformExecutionConfiguration(CLIArgumentProvider):
             "job id": captured["job_id"],
         }
         wf_code_location = captured.get("code_location", {})
+        if wf_code_location is None:
+            wf_code_location = {}
         self.code_location = {"github": os.environ.get("GIT_URL", wf_code_location.get('github', "UNDEFINED")),
                               "build-date": os.environ.get("BUILD_DATE", "UNDEFINED"),
-                              "commit_hash": os.environ.get("GIT_COMMIT",  wf_code_location.get('commit_hash', "UNDEFINED")),
-                              "path": os.environ.get("TRANSFORM_PATH",  wf_code_location.get('path', "UNDEFINED"))
+                              "commit_hash": os.environ.get("GIT_COMMIT", wf_code_location.get('commit_hash', "UNDEFINED")),
+                              "path": os.environ.get("TRANSFORM_PATH", wf_code_location.get('path', "UNDEFINED"))
                               }
 
 
