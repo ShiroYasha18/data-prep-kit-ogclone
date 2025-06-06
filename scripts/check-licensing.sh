@@ -1,4 +1,5 @@
 #!/bin/bash
+# SPDX-License-Identifier: Apache-2.0
 # Looks in files to make sure there is some form of comment with license text
 echo -n Checking for missing license text...
 # Script is having trouble dealing with names with white space, so exclude the 'fine tuning' directory

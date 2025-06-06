@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: Apache-2.0
 
 if [ "$MINIO_SERVER" == "" ]; then
     MINIO_SERVER="http://localhost:8090"

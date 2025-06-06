@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: Apache-2.0
 
 op=$1; shift
 cluster_name="${1:-dataprep}"

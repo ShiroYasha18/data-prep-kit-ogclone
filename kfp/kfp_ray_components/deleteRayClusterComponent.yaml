@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: Apache-2.0
 name: Stop Ray Cluster
 description: Cleans and shutdowns the Ray cluster
 

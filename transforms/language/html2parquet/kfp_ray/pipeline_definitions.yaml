@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: Apache-2.0
 pipeline_parameters:
     name: "html2parquet"
     description: "Pipeline for html2parquet task"
