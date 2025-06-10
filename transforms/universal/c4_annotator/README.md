@@ -31,28 +31,28 @@ Apply badwords filter from C4
 The set of dictionary keys holding [AnnotatorC4Transform](src/c4a_transform.py) 
 configuration for values are as follows:
 
-* _contents_column_name_ - specifies the name of the column holding the document text
-* _clean_contents_column_name_ - specifies the name of the column where the cleaned document is saved in the output table. This column is **added** to the output tables.  The default is `text`.
-* _drop_reason_column_name_ - specifies the name of the column where the reason to drop a document (an empty string for the documents that are kept) is saved in the output table. This column is **added** to the output tables.  The default is `drop_reason`.
-* _doc_stats_column_name_ - specifies the name of the column where the document stats are saved in the output table. This column is **added** to the output tables. The default is `doc_stats`.
-* _tokenizer_language_ - specifies the language for which a specific punkt tokenizer from nltk will be loaded. Currently, only English (`en`) language is supported.
-* _split_paragraph_ - if True, split the document text on "\n".  Set to False to apply the filters to each sentence instead of to each line. The default is `True`.
-* _remove_citations_cli_param_ - if True, remove wikipedia style citations from the text. The default is `True`.
-* _filter_no_terminal_punct_ - if True, remove lines without terminal punctuation marks. The default is `True`.
-* _min_num_sentences_ - specifies the minimum number of sentences (after line filtering) in a valid document. Set to -1 to disable. The default is `5`.
-* _min_words_per_line_ - specifies the minimum number of words in a valid line. Set to -1 to disable.  The default is `3`.
-* _max_word_length_ - specifies the maximum length of a valid word. Drop the lines with words longer than this limit. Set to -1 to disable. The default is `1000`.
-* _filter_lorem_ipsum_ - if True, mark for deletion the documents that contain "lorem ipsum". The default is `True`.
-* _filter_javascript_ - if True, drop lines mentioning "javascript". The default is `True`.
-* _filter_curly_bracket_ - if True, drop documents containing '{' or '}'. The default is `True`.
-* _filter_policy_ - if True, drop lines containing any of the phrases in POLICY_SUBSTRINGS. The default is `True`.
-* _min_paragraphs_ - specifies the minimum number of valid paragraphs in a valid document. Set to -1 to disable. The default is `3`.
-* _min_paragraph_len_ - specifies the minimum length of a valid paragraph in a document. Set to -1 to disable. The default is `200`.
-* _paragraph_delimiter_ - specifies the character used to delimit paragraphs. The default is `\n`.
-* _ldnoobw_url_ - specifies the URL from which the LDNOOBW list will be retrieved.
-* _filter_badwords_ - if True, mark for deletion documents containing bad words. The default is `False`.
-* _badwords_keep_fraction_ - specifies the percentage of pages containing bad words that should be kept.  The default is `0.0`.
-* _badwords_seed_ - specifies the seed used for the uniform distribution generator for use with keep_fraction. The default is `None`.
+* _c4a_contents_column_name_ - specifies the name of the column holding the document text
+* _c4a_clean_contents_column_name_ - specifies the name of the column where the cleaned document is saved in the output table. This column is **added** to the output tables.  The default is `text`.
+* _c4a_drop_reason_column_name_ - specifies the name of the column where the reason to drop a document (an empty string for the documents that are kept) is saved in the output table. This column is **added** to the output tables.  The default is `drop_reason`.
+* _c4a_doc_stats_column_name_ - specifies the name of the column where the document stats are saved in the output table. This column is **added** to the output tables. The default is `doc_stats`.
+* _c4a_tokenizer_language_ - specifies the language for which a specific punkt tokenizer from nltk will be loaded. Currently, only English (`en`) language is supported.
+* _c4a_split_paragraph_ - if True, split the document text on "\n".  Set to False to apply the filters to each sentence instead of to each line. The default is `True`.
+* _c4a_remove_citations_cli_param_ - if True, remove wikipedia style citations from the text. The default is `True`.
+* _c4a_filter_no_terminal_punct_ - if True, remove lines without terminal punctuation marks. The default is `True`.
+* _c4a_min_num_sentences_ - specifies the minimum number of sentences (after line filtering) in a valid document. Set to -1 to disable. The default is `5`.
+* _c4a_min_words_per_line_ - specifies the minimum number of words in a valid line. Set to -1 to disable.  The default is `3`.
+* _c4a_max_word_length_ - specifies the maximum length of a valid word. Drop the lines with words longer than this limit. Set to -1 to disable. The default is `1000`.
+* _c4a_filter_lorem_ipsum_ - if True, mark for deletion the documents that contain "lorem ipsum". The default is `True`.
+* _c4a_filter_javascript_ - if True, drop lines mentioning "javascript". The default is `True`.
+* _c4a_filter_curly_bracket_ - if True, drop documents containing '{' or '}'. The default is `True`.
+* _c4a_filter_policy_ - if True, drop lines containing any of the phrases in POLICY_SUBSTRINGS. The default is `True`.
+* _c4a_min_paragraphs_ - specifies the minimum number of valid paragraphs in a valid document. Set to -1 to disable. The default is `3`.
+* _c4a_min_paragraph_len_ - specifies the minimum length of a valid paragraph in a document. Set to -1 to disable. The default is `200`.
+* _c4a_paragraph_delimiter_ - specifies the character used to delimit paragraphs. The default is `\n`.
+* _c4a_ldnoobw_url_ - specifies the URL from which the LDNOOBW list will be retrieved.
+* _c4a_filter_badwords_ - if True, mark for deletion documents containing bad words. The default is `False`.
+* _c4a_badwords_keep_fraction_ - specifies the percentage of pages containing bad words that should be kept.  The default is `0.0`.
+* _c4a_badwords_seed_ - specifies the seed used for the uniform distribution generator for use with keep_fraction. The default is `None`.
 
 Additionally, a set of data access-specific arguments are provided that enable
 the specification of the location of domain list files, so that these
@@ -163,10 +163,3 @@ options:
                         pipeline id
   --runtime_job_id RUNTIME_JOB_ID
                         job id
-  --runtime_code_location RUNTIME_CODE_LOCATION
-                        AST string containing code location
-                        github: Github repository URL.
-                        commit_hash: github commit hash
-                        path: Path within the repository
-                        Example: { 'github': 'https://github.com/somerepo', 'commit_hash': '1324', 
-                        'path': 'transforms/universal/code' }
