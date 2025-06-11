@@ -28,7 +28,7 @@ S3_SECRET = "s3-secret"  # pragma: allowlist secret
 EXEC_SCRIPT_NAME: str = "-m dpk_c4_annotator.ray.runtime"
 PREFIX: str = ""
 
-task_image = "quay.io/dataprep1/data-prep-kit/c4-annotator-ray:latest"
+task_image = "quay.io/dataprep1/data-prep-kit/c4_annotator-ray:latest"
 
 
 # components
