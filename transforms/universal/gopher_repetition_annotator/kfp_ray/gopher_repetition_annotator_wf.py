@@ -62,7 +62,6 @@ def compute_exec_params_func(
     gra_dup_8_grams_cname: str,
     gra_dup_9_grams_cname: str,
     gra_dup_10_grams_cname: str,
-    gra_normalize_string: bool,
 ) -> dict:
     from runtime_utils import KFPUtils
 
@@ -91,7 +90,6 @@ def compute_exec_params_func(
         "gra_dup_8_grams_cname": gra_dup_8_grams_cname,
         "gra_dup_9_grams_cname": gra_dup_9_grams_cname,
         "gra_dup_10_grams_cname": gra_dup_10_grams_cname,
-        "gra_normalize_string": gra_normalize_string,
     }
 
 
@@ -161,7 +159,6 @@ def gopher_repetition_annotator(
     gra_dup_8_grams_cname: str = "top_8_grams",
     gra_dup_9_grams_cname: str = "top_9_grams",
     gra_dup_10_grams_cname: str = "top_10_grams",
-    gra_normalize_string: bool = False,
     # additional parameters
     additional_params: str = '{"wait_interval": 2, "wait_cluster_ready_tmout": 400, "wait_cluster_up_tmout": 300, "wait_job_ready_tmout": 400, "wait_print_tmout": 30, "http_retries": 5, "delete_cluster_delay_minutes": 0}',
 ):
@@ -242,7 +239,6 @@ def gopher_repetition_annotator(
             gra_dup_8_grams_cname=gra_dup_8_grams_cname,
             gra_dup_9_grams_cname=gra_dup_9_grams_cname,
             gra_dup_10_grams_cname=gra_dup_10_grams_cname,
-            gra_normalize_string=gra_normalize_string,
         )
 
         ComponentUtils.add_settings_to_component(compute_exec_params, ONE_HOUR_SEC * 2)
