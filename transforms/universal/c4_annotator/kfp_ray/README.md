@@ -2,7 +2,7 @@
 
 
 ## Summary 
-This project allows execution of the [c4_annotator Ray transform](../ray) as a
+This project allows execution of the [c4_annotator Ray transform](../dpk_c4_annotator/ray/runtime.py) as a
 [KubeFlow Pipeline](https://www.kubeflow.org/docs/components/pipelines/overview/)
 
 The detail pipeline is presented in the [Simplest Transform pipeline tutorial](../../../../kfp/doc/simple_transform_pipeline.md) 
