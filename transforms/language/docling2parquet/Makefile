@@ -29,6 +29,5 @@ run-cli-sample:
 	make venv
 	source venv/bin/activate && \
 	$(PYTHON) -m dpk_$(TRANSFORM_NAME).transform_python \
-             --data_local_config "{ 'input_folder' : 'test-data/input', 'output_folder' : 'output'}"  \
-				--data_files_to_use "['.pdf','.zip']"
-
+             --data_local_config "{ 'input_folder' : 'test-data/input', 'output_folder' : 'expected_json'}"  \
+				--data_files_to_use "['.pdf','.zip','.xml']"
