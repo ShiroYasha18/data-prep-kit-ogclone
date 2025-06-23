@@ -1,7 +1,7 @@
 #
 # This file was built manually as it does not follow the same structure as other transforms function
 #
-name: Test - @TARGET_TRANSFORM_DIR@
+name: Test - Workflow chain composition using in-memory data access
 on:
     workflow_dispatch:
     push:
