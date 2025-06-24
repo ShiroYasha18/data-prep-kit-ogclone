@@ -220,7 +220,7 @@ dpk_code_quality = "code/code_quality/dpk_code_quality"
 dpk_code2parquet = "code/code2parquet/dpk_code2parquet"
 dpk_malware = "code/malware/dpk_malware"
 dpk_repo_level_order = "code/repo_level_order/dpk_repo_level_order"
-dpk_transform_chain = "workflow/dpk_transform_chain"
+dpk_transform_chain = "chain/dpk_transform_chain"
 
 [tool.setuptools.package-data]
 #"*" = ["*.txt"]

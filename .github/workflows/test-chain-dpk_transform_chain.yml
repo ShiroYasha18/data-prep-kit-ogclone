@@ -1,7 +1,7 @@
 #
 # This file was built manually as it does not follow the same structure as other transforms function
 #
-name: Test - Workflow chain composition using in-memory data access
+name: Test - transforms/chain
 on:
     workflow_dispatch:
     push:
@@ -14,7 +14,7 @@ on:
         paths:
             - ".make.*"
             - "transforms/.make.transforms"
-            - "@TARGET_TRANSFORM_DIR@/**"
+            - "transforms/chain/**"
             - "data-processing-lib/**"
             - "!**.md"
             - "!**/doc/**"
@@ -28,7 +28,7 @@ on:
         paths:
             - ".make.*"
             - "transforms/.make.transforms"
-            - "@TARGET_TRANSFORM_DIR@/**"
+            - "transforms/chain/**"
             - "data-processing-lib/**"
             - "!**.md"
             - "!**/doc/**"
@@ -44,10 +44,10 @@ jobs:
         steps:
             - name: Checkout
               uses: actions/checkout@v4
-            - name: Test transform source in @TARGET_TRANSFORM_DIR@
+            - name: Test transform source in transforms/chain
               run: |
-                  if [ -e "@TARGET_TRANSFORM_DIR@/Makefile" ]; then
-                      make -C @TARGET_TRANSFORM_DIR@ DOCKER=docker test-src
+                  if [ -e "transforms/chain/Makefile" ]; then
+                      make -C transforms/chain test-src
                   else
-                      echo "@TARGET_TRANSFORM_DIR@/Makefile not found - source testing Not available for this package."
+                      echo "transforms/chain/Makefile not found - source testing Not available for this package."
                   fi

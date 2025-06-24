@@ -16,7 +16,7 @@ import gc
 import concurrent.futures
 from data_processing.utils import get_logger
 
-class ParallelOrchestrator:
+class ParallelTransformsChain:
     def __init__(self, data_access, transforms, max_workers=4):
         """
         data_access: instance of DataAccessLocal or DataAccessS3

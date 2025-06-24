@@ -16,12 +16,12 @@ import pyarrow.parquet as pq
 from dpk_lang_id import LangIdentificationTransform
 from dpk_doc_quality import DocQualityTransform
 from data_processing.data_access import DataAccessLocal
-from dpk_transform_chain import Orchestrator
+from dpk_transform_chain import TransformsChain
 
 basedir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../test-data"))
 
 class TestTransformChain:
-    def test_rep_removal(self):
+    def test_chain(self):
         params = {"model_kind": "fasttext",
                   "model_url": "facebook/fasttext-language-identification",
                   "model_credential": os.environ.get('HF_READ_ACCESS_TOKEN', "PUT YOUR OWN HUGGINGFACE CREDENTIAL"),
@@ -49,7 +49,7 @@ class TestTransformChain:
 
         data_access = DataAccessLocal(**da_config)
 
-        orch = Orchestrator(
+        orch = TransformsChain(
             data_access=data_access,
             transforms=[lang_id, doc_quality]
         )

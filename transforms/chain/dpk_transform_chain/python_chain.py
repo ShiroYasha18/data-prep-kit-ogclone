@@ -16,7 +16,7 @@ import os
 import gc
 from data_processing.utils import get_logger
 
-class Orchestrator:
+class TransformsChain:
     def __init__(self, data_access, transforms):
         self.data_access = data_access
         self.transforms = transforms

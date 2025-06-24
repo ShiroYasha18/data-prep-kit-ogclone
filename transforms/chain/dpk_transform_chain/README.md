@@ -12,8 +12,8 @@ This package supports:
 ## 📦 Package Components
 | Module | Description |
 |--------|-------------|
-| `Orchestrator` | Full in-memory pipeline (small to medium files) |
-| `ParallelOrchestrator` | Parallel batch processing in memory |
+| `TransformsChain` | Full in-memory pipeline (small to medium files) |
+| `ParallelTransformsChain` | Parallel batch processing in memory |
 
 ---
 
@@ -38,7 +38,7 @@ pip install .
 ## 🔬 Usage Example
 
 ```python
-from dpk_transform_chain import Orchestrator
+from dpk_transform_chain import TransformsChain
 from transforms import Docling2ParquetTransform, DocChunkTransform
 from data_access import DataAccessLocal
 
@@ -53,7 +53,7 @@ data_access = DataAccessLocal(
 )
 
 # Create orchestrator instance (this example uses AutoMode)
-orch = Orchestrator(
+orch = TransformsChain(
     data_access=data_access,
     transforms=[transform1, transform2],
 )
@@ -68,7 +68,7 @@ orch.run()
 
 | Orchestrator | Class |
 |--------------|-------|
-| Full memory | `Orchestrator(data_access, transforms)` |
+| Full memory | `TransformsChain(data_access, transforms)` |
 
 ---
 
