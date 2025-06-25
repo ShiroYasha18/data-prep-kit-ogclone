@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: Apache-2.0
 # (C) Copyright IBM Corp. 2024.
 # Licensed under the Apache License, Version 2.0 (the “License”);
 # you may not use this file except in compliance with the License.
@@ -50,7 +51,7 @@ def compute_exec_params_func(
     data_files_to_use: str,
     runtime_pipeline_id: str,
     runtime_job_id: str,
-    code_profiler_contents_column_name: str,
+    code_profiler_contents: str,
     code_profiler_programming_language: str,
 ) -> dict:
     from runtime_utils import KFPUtils
@@ -66,7 +67,7 @@ def compute_exec_params_func(
         "runtime_worker_options": str(actor_options),
         "runtime_pipeline_id": runtime_pipeline_id,
         "runtime_job_id": runtime_job_id,
-        "code_profiler_contents_column_name": code_profiler_contents_column_name,
+        "code_profiler_contents": code_profiler_contents,
         "code_profiler_programming_language": code_profiler_programming_language, 
     }
 
@@ -123,7 +124,7 @@ def code_profiler(
     runtime_actor_options: dict = {"num_cpus": 0.8},
     runtime_pipeline_id: str = "pipeline_id",
     # code_profiler parameters
-    code_profiler_contents_column_name: str = "contents",
+    code_profiler_contents: str = "contents",
     code_profiler_programming_language: str = "programming_language",
    
     # additional parameters
@@ -159,7 +160,7 @@ def code_profiler(
     :param data_num_samples - num samples to process
     :param runtime_actor_options - actor options
     :param runtime_pipeline_id - pipeline id
-    :param code_profiler_contents_column_name - contents column
+    :param code_profiler_contents - contents column
     :param code_profiler_programming_language - programming language column
     :return: None
     """
@@ -192,7 +193,7 @@ def code_profiler(
             data_files_to_use=data_files_to_use,
             runtime_pipeline_id=runtime_pipeline_id,
             runtime_job_id=run_id,
-            code_profiler_contents_column_name=code_profiler_contents_column_name,
+            code_profiler_contents=code_profiler_contents,
             code_profiler_programming_language=code_profiler_programming_language,
         )
         ComponentUtils.add_settings_to_component(compute_exec_params, ONE_HOUR_SEC * 2)
