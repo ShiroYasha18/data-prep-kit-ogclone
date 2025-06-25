@@ -9,12 +9,12 @@ venv::
 	@# Help: Create the virtual environment using pyproject.toml
 	$(PYTHON) -m venv venv
 	source venv/bin/activate; \
-	pip install $(REPOROOT)/data-processing-lib; \
-	pip install "$(REPOROOT)/transforms[lang_id, doc_quality]"; \
-	pip install pytest
+	$(PYTHON) -m pip install -e $(REPOROOT)/data-processing-lib; \
+	$(PYTHON) -m pip install -e "$(REPOROOT)/transforms[lang_id, doc_quality]"; \
+	$(PYTHON) -m pip install pytest
 
 test-src: venv
 	source venv/bin/activate; \
-	pip list; \
+	$(PYTHON) -m pip list; \
 	pytest test
 
