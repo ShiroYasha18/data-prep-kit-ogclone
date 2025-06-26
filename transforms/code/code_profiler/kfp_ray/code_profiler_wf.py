@@ -51,8 +51,8 @@ def compute_exec_params_func(
     data_files_to_use: str,
     runtime_pipeline_id: str,
     runtime_job_id: str,
-    code_profiler_contents: str,
-    code_profiler_programming_language: str,
+    contents: str,
+    programming_language: str,
 ) -> dict:
     from runtime_utils import KFPUtils
 
@@ -67,8 +67,8 @@ def compute_exec_params_func(
         "runtime_worker_options": str(actor_options),
         "runtime_pipeline_id": runtime_pipeline_id,
         "runtime_job_id": runtime_job_id,
-        "code_profiler_contents": code_profiler_contents,
-        "code_profiler_programming_language": code_profiler_programming_language, 
+        "contents": contents,
+        "programming_language": programming_language, 
     }
 
 
@@ -124,8 +124,8 @@ def code_profiler(
     runtime_actor_options: dict = {"num_cpus": 0.8},
     runtime_pipeline_id: str = "pipeline_id",
     # code_profiler parameters
-    code_profiler_contents: str = "contents",
-    code_profiler_programming_language: str = "programming_language",
+    contents: str = "contents",
+    programming_language: str = "programming_language",
    
     # additional parameters
     additional_params: str = '{"wait_interval": 2, "wait_cluster_ready_tmout": 400, "wait_cluster_up_tmout": 300, "wait_job_ready_tmout": 400, "wait_print_tmout": 30, "http_retries": 5, "delete_cluster_delay_minutes": 0}',
@@ -160,8 +160,8 @@ def code_profiler(
     :param data_num_samples - num samples to process
     :param runtime_actor_options - actor options
     :param runtime_pipeline_id - pipeline id
-    :param code_profiler_contents - contents column
-    :param code_profiler_programming_language - programming language column
+    :param contents - contents column
+    :param programming_language - programming language column
     :return: None
     """
     # In KFPv2 dsl.RUN_ID_PLACEHOLDER is deprecated and cannot be used since SDK 2.5.0. On another hand we cannot create
@@ -193,8 +193,8 @@ def code_profiler(
             data_files_to_use=data_files_to_use,
             runtime_pipeline_id=runtime_pipeline_id,
             runtime_job_id=run_id,
-            code_profiler_contents=code_profiler_contents,
-            code_profiler_programming_language=code_profiler_programming_language,
+            contents=contents,
+            programming_language=programming_language,
         )
         ComponentUtils.add_settings_to_component(compute_exec_params, ONE_HOUR_SEC * 2)
         # start Ray cluster
