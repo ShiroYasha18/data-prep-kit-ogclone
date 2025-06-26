@@ -272,6 +272,8 @@ class Docling2ParquetTransform(AbstractBinaryTransform):
             ext = kind.extension
         elif ext == ".xml":
             mime = "application/xml"
+        elif ext == ".html" or ext == ".htm":
+            mime = "text/html"
         else:
             mime = None
         
