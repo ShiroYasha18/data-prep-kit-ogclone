@@ -14,7 +14,7 @@ authors = [
 dependencies = [
     "requests",
     "kubernetes",
-    "data-prep-toolkit[ray]>=1.0.0.dev1",
+    "data-prep-toolkit[ray]>=1.0.0",
 ]
 
 [build-system]
