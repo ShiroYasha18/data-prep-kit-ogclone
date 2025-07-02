@@ -45,6 +45,9 @@ all = { file = [
 "language/extreme_tokenized/requirements.txt",
 "language/readability/requirements.txt",
 "language/gneissweb_classification/requirements.txt",
+"language/ml_filter/requirements.txt",
+"language/enrichment/requirements.txt",
+
 
 ##### Cannot have html2parquet until we solve
 ## docling-ibm-models 1.1.7 depends on lxml<5.0.0 and >=4.9.1
