@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: Apache-2.0
 # (C) Copyright IBM Corp. 2024.
 # Licensed under the Apache License, Version 2.0 (the “License”);
 # you may not use this file except in compliance with the License.
@@ -168,7 +169,6 @@ class RepoLevelOrderTransform(AbstractTableTransform):
         self.logger.debug(f"Transformed one table with {len(table)} rows")
         metadata = {"nfiles": 1, "nrows": len(table)} | stats
         return [], metadata
-
 
 
 class RepoLevelOrderTransformConfiguration(TransformConfiguration):

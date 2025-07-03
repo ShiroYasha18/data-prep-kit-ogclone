@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: Apache-2.0
 # (C) Copyright IBM Corp. 2024.
 # Licensed under the Apache License, Version 2.0 (the “License”);
 # you may not use this file except in compliance with the License.
@@ -23,7 +24,7 @@ from workflow_support.compile_utils import (
 )
 
 
-task_image = "quay.io/dataprep1/data-prep-kit/ededup-ray:latest"
+task_image = "quay.io/dataprep1/data-prep-kit/ededup-ray:1.1.2"
 
 # The secret name containing the s3 credentials.
 S3_SECRET = "s3-secret"
@@ -32,7 +33,7 @@ S3_SECRET = "s3-secret"
 EXEC_SCRIPT_NAME: str = "-m dpk_ededup.ray.transform"
 
 # components
-base_kfp_image = "quay.io/dataprep1/data-prep-kit/kfp-data-processing:latest"
+base_kfp_image = "quay.io/dataprep1/data-prep-kit/kfp-data-processing:1.1.2"
 
 # path to kfp component specifications files
 component_spec_path = os.getenv("KFP_COMPONENT_SPEC_PATH", DEFAULT_KFP_COMPONENT_SPEC_PATH)
@@ -92,12 +93,12 @@ def ededup(
     # data access. checkpointing is not supported by dedup
     data_s3_config: str = "{'input_folder': 'test/ededup/input/', 'output_folder': 'test/ededup/output'}",
     data_s3_access_secret: str = S3_SECRET,
+    other_secrets: dict = {},
     data_max_files: int = -1,
     data_num_samples: int = -1,
     # orchestrator
     runtime_actor_options: dict = {"num_cpus": 0.8},
     runtime_pipeline_id: str = "pipeline_id",
-    runtime_code_location: dict = {"github": "github", "commit_hash": "12345", "path": "path"},
     # ededup
     ededup_hash_cpu: float = 0.5,
     ededup_doc_column: str = "contents",
@@ -141,7 +142,6 @@ def ededup(
     :param data_num_samples - num samples to process
     :param runtime_actor_options - actor options
     :param runtime_pipeline_id - pipeline id
-    :param runtime_code_location - code location
     :param ededup_hash_cpu - number of CPUs per hash
     :param ededup_doc_column - key for accessing data
     :param ededup_use_snapshot - flag to start from existing snapshot
@@ -175,7 +175,6 @@ def ededup(
             data_num_samples=data_num_samples,
             runtime_pipeline_id=runtime_pipeline_id,
             runtime_job_id=run_id,
-            runtime_code_location=runtime_code_location,
             ededup_doc_column=ededup_doc_column,
             ededup_hash_cpu=ededup_hash_cpu,
             ededup_use_snapshot=ededup_use_snapshot,
@@ -199,9 +198,19 @@ def ededup(
             ray_head_options=ray_head_options,
             ray_worker_options=ray_worker_options,
             server_url=server_url,
+            other_secrets=other_secrets,
             additional_params=additional_params,
         )
         ComponentUtils.add_settings_to_component(ray_cluster, ONE_HOUR_SEC * 2)
+        if os.getenv("KFPv2", "0") == "1":
+            from kfp import kubernetes
+            # FIXME: Due to kubeflow/pipelines#10914, secret names cannot be provided as pipeline arguments.
+            # As a workaround, the secret name is hard coded.
+            env2key = ComponentUtils.set_secret_key_to_env()
+            kubernetes.use_secret_as_env(task=ray_cluster, secret_name=S3_SECRET, secret_key_to_env=env2key)
+        else:
+            ComponentUtils.set_s3_env_vars_to_component(ray_cluster, data_s3_access_secret)
+
         ray_cluster.after(compute_exec_params)
         # Execute job
         execute_job = execute_ray_jobs_op(

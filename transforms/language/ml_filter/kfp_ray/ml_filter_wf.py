@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: Apache-2.0
 # (C) Copyright IBM Corp. 2024.
 # Licensed under the Apache License, Version 2.0 (the “License”);
 # you may not use this file except in compliance with the License.
@@ -22,13 +23,13 @@ from workflow_support.compile_utils import (
 )
 
 
-task_image = "quay.io/dataprep1/data-prep-kit/ml_filter-ray:latest"
+task_image = "quay.io/dataprep1/data-prep-kit/ml_filter-ray:1.1.2"
 
 # the name of the job script
 EXEC_SCRIPT_NAME: str = "-m dpk_ml_filter.ray.runtime"
 
 # components
-base_kfp_image = "quay.io/dataprep1/data-prep-kit/kfp-data-processing:latest"
+base_kfp_image = "quay.io/dataprep1/data-prep-kit/kfp-data-processing:1.1.2"
 
 # path to kfp component specifications files
 component_spec_path = os.getenv("KFP_COMPONENT_SPEC_PATH", DEFAULT_KFP_COMPONENT_SPEC_PATH)

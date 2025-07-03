@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: Apache-2.0
 # (C) Copyright IBM Corp. 2024.
 # Licensed under the Apache License, Version 2.0 (the “License”);
 # you may not use this file except in compliance with the License.
@@ -120,7 +121,7 @@ class ComponentUtils:
         :param prefix: prefix to add to env name
         """
         if env2key is None:
-            env2key = {"s3-key": "S3_KEY", "s3-secret": "S3_SECRET", "s3-endpoint": "ENDPOINT"}
+            env2key = {"s3-key": "S3_KEY", "s3-secret": "S3_SECRET", "s3-endpoint": "S3_ENDPOINT"}
 
         if prefix is not None:
             for secret_key, _ in env2key.items():
