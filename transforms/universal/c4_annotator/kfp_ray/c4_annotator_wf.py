@@ -21,18 +21,14 @@ from workflow_support.compile_utils import (
     ONE_WEEK_SEC,
     ComponentUtils,
 )
+task_image = "quay.io/dataprep1/data-prep-kit/c4_annotator-ray:1.1.2"
 
 # The secret name containing the s3 credentials.
 S3_SECRET = "s3-secret"  # pragma: allowlist secret
-
 EXEC_SCRIPT_NAME: str = "-m dpk_c4_annotator.ray.runtime"
 PREFIX: str = ""
-
-task_image = "quay.io/dataprep1/data-prep-kit/c4_annotator-ray:latest"
-
-
 # components
-base_kfp_image = "quay.io/dataprep1/data-prep-kit/kfp-data-processing:latest"
+base_kfp_image = "quay.io/dataprep1/data-prep-kit/kfp-data-processing:1.1.2"
 
 component_spec_path = os.getenv("KFP_COMPONENT_SPEC_PATH", DEFAULT_KFP_COMPONENT_SPEC_PATH)
 
@@ -84,7 +80,7 @@ def compute_exec_params_func(
         "data_max_files": data_max_files,
         "data_num_samples": data_num_samples,
         "data_checkpointing": data_checkpointing,
-        "data_data_sets": data_data_sets,
+        "data_data_sets": data_data_sets.strip(),
         "data_files_to_use": data_files_to_use,
         "runtime_num_workers": KFPUtils.default_compute_execution_params(str(worker_options), str(actor_options)),
         "runtime_worker_options": str(actor_options),
@@ -158,6 +154,7 @@ def c4_annotator(
     # data access
     data_s3_config: str = "{'input_folder': 'test/fineweb_quality_annotator/input/', 'output_folder': 'test/fineweb_quality_annotator/output/'}",
     data_s3_access_secret: str = S3_SECRET,
+    other_secrets: dict = {},
     data_max_files: int = -1,
     data_num_samples: int = -1,
     data_checkpointing: bool = False,
@@ -278,6 +275,7 @@ def c4_annotator(
             c4a_badwords_keep_fraction=badwords_keep_fraction,
             c4a_badwords_seed=badwords_seed,
         )
+
         ComponentUtils.add_settings_to_component(compute_exec_params, ONE_HOUR_SEC * 2)
         # start Ray cluster
         ray_cluster = create_ray_op(
@@ -286,11 +284,20 @@ def c4_annotator(
             ray_head_options=ray_head_options,
             ray_worker_options=ray_worker_options,
             server_url=server_url,
+            other_secrets=other_secrets,
             additional_params=additional_params,
         )
         ComponentUtils.add_settings_to_component(ray_cluster, ONE_HOUR_SEC * 2)
-        ray_cluster.after(compute_exec_params)
+        if os.getenv("KFPv2", "0") == "1":
+            from kfp import kubernetes
 
+            # FIXME: Due to kubeflow/pipelines#10914, secret names cannot be provided as pipeline arguments.
+            # As a workaround, the secret name is hard coded.
+            env2key = ComponentUtils.set_secret_key_to_env()
+            kubernetes.use_secret_as_env(task=ray_cluster, secret_name=S3_SECRET, secret_key_to_env=env2key)
+        else:
+            ComponentUtils.set_s3_env_vars_to_component(ray_cluster, data_s3_access_secret)
+        ray_cluster.after(compute_exec_params)
         # Execute job
         execute_job = execute_ray_jobs_op(
             ray_name=ray_name,
@@ -300,7 +307,6 @@ def c4_annotator(
             exec_script_name=EXEC_SCRIPT_NAME,
             server_url=server_url,
         )
-
         ComponentUtils.add_settings_to_component(execute_job, ONE_WEEK_SEC)
         if os.getenv("KFPv2", "0") == "1":
             from kfp import kubernetes
@@ -311,8 +317,8 @@ def c4_annotator(
             kubernetes.use_secret_as_env(task=execute_job, secret_name=S3_SECRET, secret_key_to_env=env2key)
         else:
             ComponentUtils.set_s3_env_vars_to_component(execute_job, data_s3_access_secret)
-
         execute_job.after(ray_cluster)
+
 
 if __name__ == "__main__":
     # Compiling the pipeline
