@@ -438,7 +438,7 @@ class DataAccess(ABC):
         in the case of failure dict is None and number of operation retries.
         Retries are performed on operation failures and are typically due to the resource overload.
         """
-       pass
+        pass
 
     def sample_input_data(self, n_samples: int = 10) -> tuple[dict[str, Any], int]:
         """
