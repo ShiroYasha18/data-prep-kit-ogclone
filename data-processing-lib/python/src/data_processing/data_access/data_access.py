@@ -59,7 +59,7 @@ class DataAccess(ABC):
         Get output folder as a string
         :return: output_folder
         """
-    pass
+        pass
 
     @abstractmethod
     def get_input_folder(self) -> str:
