@@ -11,13 +11,8 @@
 # limitations under the License.
 ################################################################################
 
-from abc import ABC, abstractmethod
+from dpk_filter.transform import FilterTransform
 
-class AbstractTransform(ABC):
-    """
-    Base class for all transform types
-    """
-
-    @abstractmethod
-    def __init__(self):
-        pass
+def test_transform_default():
+    import pyarrow.parquet as pq
+    FilterTransform(config={}).transform(pq.read_table('../test-data/input/test1.parquet'))
