@@ -421,8 +421,8 @@ class RayRemoteJobs:
                     sys.exit(1)
             logger.info(f"Did not detect any exceptions in current job. job_output_stats: {_metastats}")
         except Exception as e:
-            logger.info(f"Could not read/parse metadata.json: {str(e)}")
-            pass
+            logger.error(f"Could not read/parse metadata.json: {str(e)}")
+            sys.exit(1)
 
 def _execute_remote_job(
     name: str,
