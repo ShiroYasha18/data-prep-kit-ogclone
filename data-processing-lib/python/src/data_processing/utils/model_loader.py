@@ -13,7 +13,6 @@
 import os
 import tempfile
 import shutil
-from data_processing.data_access import DataAccessS3
 from data_processing.utils import ParamsUtils, get_logger
 from data_processing.utils.model_loader_registry import MODEL_LOADERS
 logger = get_logger(__name__)
@@ -35,6 +34,7 @@ def load_model(model_path_or_url: str, model_type: str, token: str = None, **kwa
     try:
         # handle s3/COS
         if model_path_or_url.startswith("s3://"):
+            from data_processing.data_access import DataAccessS3
             s3_url = model_path_or_url[5:]
             temp_dir = tempfile.mkdtemp()
 
