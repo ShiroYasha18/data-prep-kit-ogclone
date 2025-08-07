@@ -109,3 +109,17 @@ class DataAccessMemory(DataAccess):
         :return pyarrow table to be seraialized
         """
         return pa.Table.from_pydict(buffer)
+
+    def save_job_metadata(self, metadata: dict[str, Any]) -> tuple[dict[str, Any], int] | None:
+        return None
+
+    
+    def get_file(self, path: str) -> tuple[bytes, int] | None:
+        return None
+
+    def get_input_folder(self) -> str | None:
+        return None
+        
+
+    def save_file(self, path: str, data: bytes) -> tuple[dict[str, Any], int] | None:
+        return None
