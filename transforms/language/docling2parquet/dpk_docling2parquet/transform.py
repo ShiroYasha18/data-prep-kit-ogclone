@@ -96,9 +96,9 @@ docling2parquet_batch_size_default = -1
 docling2parquet_contents_type_default = docling2parquet_contents_types.MARKDOWN
 docling2parquet_do_table_structure_default = True
 docling2parquet_do_ocr_default = True
-docling2parquet_bitmap_area_threshold_default = 0.05
+docling2parquet_bitmap_area_threshold_default = 0.10
 docling2parquet_ocr_engine_default = docling2parquet_ocr_engine.EASYOCR
-docling2parquet_pdf_backend_default = docling2parquet_pdf_backend.DLPARSE_V2
+docling2parquet_pdf_backend_default = docling2parquet_pdf_backend.PYPDFIUM2
 docling2parquet_double_precision_default = 8
 
 docling2parquet_batch_size_cli_param = f"{cli_prefix}{docling2parquet_batch_size_key}"
@@ -416,7 +416,7 @@ class Docling2ParquetTransform(AbstractBinaryTransform):
             logger.debug(f"flushing buffered table with {len(self.buffer)} rows.")
             table = pa.Table.from_pylist(self.buffer)
             result.append((TransformUtils.convert_arrow_to_binary(table=table), ".parquet"))
-            self.buffer = None
+            self.buffer = []
         else:
             logger.debug(f"Empty buffer. nothing to flush.")
         return result, {}
